@@ -3,6 +3,7 @@
 `signal-upgrade` is the ordinary Signal contract for the `upgrade`
 triad.
 
-This U1 crate is a scaffold only. It carries the macro-backed channel
-shell, observability surface, and `RequestUnimplemented` reply that U2
-will populate with the merged catalogue and handover operations.
+It merges the former catalogue-inspection surface from
+`signal-sema-upgrade` and the adjacent-version handover surface from
+`signal-version-handover`. Runtime migration logic remains in
+`upgrade`; this crate only owns the wire records and frame shape.
