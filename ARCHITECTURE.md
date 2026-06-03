@@ -33,9 +33,17 @@ containers. The projection policy for those bytes lives in
 
 ## Code Map
 
+- `schema/lib.schema` declares the first real schema-next source for
+  the ordinary upgrade signal surface and its generated
+  Signal/Nexus/SEMA roots.
+- `schema/lib.asschema` and `src/schema/lib.rs` are checked-in
+  generated artifacts; `build.rs` fails the build when they are stale.
 - `src/lib.rs` declares the merged catalogue and handover channel.
 - `tests/round_trip.rs` proves the merged channel round-trips through
   NOTA and Signal frames.
+- `tests/generated_schema.rs` executes the generated roots: short
+  header/frame round-trip, Signal -> Nexus -> SEMA projection, SEMA ->
+  Signal reply projection, and typed trace object naming.
 - `examples/canonical.nota` records stable catalogue text examples.
 
 ## Invariants
@@ -49,7 +57,10 @@ containers. The projection policy for those bytes lives in
 
 ## Pending schema-engine upgrade
 
-**Status:** scheduled for migration to schema-language-based contract per `reports/designer/326-v13-spirit-complete-schema-vision.md` + `reports/designer/324-migration-mvp-spirit-handover-re-specification.md`.
+**Status:** migration started. The crate now carries checked-in
+schema-next artifacts beside the hand-written `signal_channel!`
+surface. The generated module is a witness surface until the runtime
+cutover replaces the hand-written contract path.
 
 **Target:** this crate's hand-written `signal_channel!` invocation + typed records (catalogue inspection, attempt-upgrade verb, handover-protocol verbs, mirror/divergence/recovery records) converts to a single `signal-upgrade/signal-upgrade.schema` file. The brilliant macro library (`primary-ezqx.1`) reads the schema + emits the wire types, ShortHeader projection, dispatcher, VersionProjection, and storage descriptors for any consumer-side persistence.
 

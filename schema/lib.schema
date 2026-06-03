@@ -1,0 +1,67 @@
+{}
+[(Inspect Inspection)
+ (AttemptUpgrade Attempt)
+ (Report ReportQuery)
+ (AskHandoverMarker MarkerRequest)
+ (ReadyToHandover ReadinessReport)
+ (HandoverCompleted CompletionReport)
+ (Mirror MirrorPayload)
+ (Divergence DivergencePayload)
+ (RecoverFromFailure RecoveryRequest)]
+[(InspectionReported InspectionReported)
+ (UpgradeCompleted Completion)
+ (UpgradeRejected Rejection)
+ (Reported Reported)
+ (HandoverMarker HandoverMarker)
+ (HandoverAccepted HandoverAcceptance)
+ (HandoverFinalized HandoverFinalization)
+ (MirrorAcknowledged MirrorAcknowledgement)
+ (DivergenceAcknowledged DivergenceAcknowledgement)
+ (RecoveryCompleted RecoveryResult)
+ (HandoverRejected HandoverRejection)
+ (RequestUnimplemented RequestUnimplemented)]
+{
+  ComponentName String
+  MigrationIdentifier String
+  RecordKind String
+  RawByte Integer
+  RawBytes (Vec RawByte)
+  ContractVersion { byte RawBytes }
+  Version { major Integer minor Integer patch Integer }
+  SupportedMigration { component ComponentName source Version target Version identifier MigrationIdentifier }
+  Inspection [All (Component ComponentName)]
+  Attempt { component ComponentName source Version target Version }
+  ReportQuery [All (Component ComponentName)]
+  InspectionReported { migrations (Vec SupportedMigration) }
+  Completion { component ComponentName source Version target Version migration MigrationIdentifier changed_records Integer }
+  RejectionReason [UnsupportedMigration ComponentMismatch MigrationFailed]
+  Rejection { component ComponentName source Version target Version reason RejectionReason }
+  Reported { completions (Vec Completion) rejections (Vec Rejection) }
+  UnimplementedReason [NotBuiltYet IntegrationNotLanded]
+  RequestUnimplemented { reason UnimplementedReason }
+  Date { year Integer month Integer day Integer }
+  Time { hour Integer minute Integer second Integer }
+  HandoverMarker { component ComponentName schema_hash ContractVersion commit_sequence Integer write_counter Integer last_record_identifier (Optional Integer) recorded_at_date Date recorded_at_time Time }
+  MarkerRequest { component ComponentName }
+  ReadinessReport { component ComponentName source_marker HandoverMarker }
+  CompletionReport { component ComponentName accepted_marker HandoverMarker }
+  MirrorPayload { component ComponentName source_version ContractVersion target_version ContractVersion kind RecordKind payload RawBytes }
+  DivergencePayload { component ComponentName source_version ContractVersion target_version ContractVersion reason DivergenceReason kind RecordKind payload RawBytes }
+  RecoveryRequest { component ComponentName failure_identifier Integer }
+  HandoverAcceptance { accepted_marker HandoverMarker }
+  HandoverFinalization { finalized_marker HandoverMarker }
+  MirrorAcknowledgement { component ComponentName write_counter Integer }
+  DivergenceAcknowledgement { component ComponentName divergence_identifier Integer }
+  RecoveryResult { component ComponentName recovered Boolean }
+  HandoverRejection { component ComponentName reason HandoverRejectionReason }
+  HandoverRejectionReason [SchemaMismatch CommitSequenceAdvanced AlreadyInHandover NotReady]
+  DivergenceReason [NotRepresentable TargetUnavailable TargetRejected]
+  NexusWork [(SignalArrived Input) (SemaWriteCompleted SemaWriteOutput) (SemaReadCompleted SemaReadOutput) (EffectCompleted NexusEffectResult)]
+  NexusAction [(CommandSemaWrite SemaWriteInput) (CommandSemaRead SemaReadInput) (ReplyToSignal Output) (CommandEffect NexusEffectCommand) (Continue NexusWork)]
+  NexusEffectCommand [(CallHandoverPeer MirrorPayload)]
+  NexusEffectResult [(HandoverPeerCalled MirrorAcknowledgement)]
+  SemaWriteInput [(AttemptUpgrade Attempt) (ReadyToHandover ReadinessReport) (HandoverCompleted CompletionReport) (Mirror MirrorPayload) (Divergence DivergencePayload) (RecoverFromFailure RecoveryRequest)]
+  SemaReadInput [(Inspect Inspection) (Report ReportQuery) (AskHandoverMarker MarkerRequest)]
+  SemaWriteOutput [(UpgradeCompleted Completion) (UpgradeRejected Rejection) (HandoverAccepted HandoverAcceptance) (HandoverFinalized HandoverFinalization) (MirrorAcknowledged MirrorAcknowledgement) (DivergenceAcknowledged DivergenceAcknowledgement) (RecoveryCompleted RecoveryResult) (HandoverRejected HandoverRejection) (RequestUnimplemented RequestUnimplemented)]
+  SemaReadOutput [(InspectionReported InspectionReported) (Reported Reported) (HandoverMarker HandoverMarker) (RequestUnimplemented RequestUnimplemented)]
+}

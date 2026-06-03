@@ -6,6 +6,11 @@
 //! migration logic lives in `upgrade`; cross-version projection helpers
 //! live in `version-projection`.
 
+pub mod schema {
+    #[rustfmt::skip]
+    pub mod lib;
+}
+
 use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode, NotaEnum, NotaRecord, NotaTransparent};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_frame::signal_channel;
