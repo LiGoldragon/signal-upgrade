@@ -5,7 +5,7 @@
 `signal-upgrade` owns the peer-callable wire vocabulary for the
 `upgrade` runtime. It is one leg of the `upgrade` triad beside the
 runtime crate `upgrade` and the owner-only contract
-`owner-signal-upgrade`.
+`meta-signal-upgrade`.
 
 ## Boundaries
 
