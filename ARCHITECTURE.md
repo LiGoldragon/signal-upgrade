@@ -13,6 +13,8 @@ This crate owns only typed Signal records, NOTA projection derives,
 frame aliases emitted by `signal_channel!`, and round-trip witnesses.
 It does not own runtime orchestration, socket binding, durable storage,
 migration execution, systemd unit control, or Persona handover logic.
+Daemon-internal Signal/Nexus/SEMA plane schemas live inside the
+`upgrade` runtime crate, not in this external contract repository.
 
 ## Working Shape
 
@@ -34,16 +36,16 @@ containers. The projection policy for those bytes lives in
 ## Code Map
 
 - `schema/lib.schema` declares the first real schema-next source for
-  the ordinary upgrade signal surface and its generated
-  Signal/Nexus/SEMA roots.
+  the ordinary upgrade signal surface and its generated wire-only
+  Input/Output roots.
 - `schema/lib.asschema` and `src/schema/lib.rs` are checked-in
   generated artifacts; `build.rs` fails the build when they are stale.
 - `src/lib.rs` declares the merged catalogue and handover channel.
 - `tests/round_trip.rs` proves the merged channel round-trips through
   NOTA and Signal frames.
-- `tests/generated_schema.rs` executes the generated roots: short
-  header/frame round-trip, Signal -> Nexus -> SEMA projection, SEMA ->
-  Signal reply projection, and typed trace object naming.
+- `tests/generated_schema.rs` exercises generated Input/Output
+  short-header/frame round-trips and guards against generated
+  Nexus/SEMA runtime terms in this contract.
 - `examples/canonical.nota` records stable catalogue text examples.
 
 ## Invariants

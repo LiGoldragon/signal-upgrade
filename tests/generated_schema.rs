@@ -1,8 +1,9 @@
 use signal_upgrade::schema::lib::{
-    Attempt, Completion, ComponentName, Input, InputRoute, NexusAction, NexusActionRoute,
-    NexusWork, ObjectName, OriginRoute, Output, OutputRoute, SemaWriteInput, SemaWriteInputRoute,
-    SemaWriteOutput, SignalObjectName, TraceEvent, Version,
+    Attempt, Completion, ComponentName, Input, InputRoute, Output, OutputRoute, Version,
 };
+
+const SCHEMA_SOURCE: &str = include_str!("../schema/lib.schema");
+const GENERATED_SCHEMA_RUST: &str = include_str!("../src/schema/lib.rs");
 
 fn version(major: u64, minor: u64, patch: u64) -> Version {
     Version {
@@ -44,39 +45,18 @@ fn generated_signal_input_owns_short_header_and_frame() {
 }
 
 #[test]
-fn generated_signal_nexus_sema_projection_routes_attempt_upgrade() {
-    let work = NexusWork::signal_arrived(Input::attempt_upgrade(attempt()))
-        .with_origin_route(OriginRoute(17));
-    let action = work.into_nexus_action();
+fn generated_signal_output_owns_short_header_and_frame() {
+    let output = Output::upgrade_completed(completion());
 
-    assert_eq!(action.origin_route(), OriginRoute(17));
-    assert_eq!(action.root().route(), NexusActionRoute::CommandSemaWrite);
-    match action.root() {
-        NexusAction::CommandSemaWrite(SemaWriteInput::AttemptUpgrade(payload)) => {
-            assert_eq!(payload.component, "persona-spirit");
-        }
-        other => panic!("expected AttemptUpgrade SEMA write, got {other:?}"),
-    }
+    assert_eq!(output.route(), OutputRoute::UpgradeCompleted);
 
-    let sema_input = action.into_sema_write_input();
-    assert_eq!(sema_input.origin_route(), OriginRoute(17));
-    assert_eq!(
-        sema_input.root().route(),
-        SemaWriteInputRoute::AttemptUpgrade
-    );
-}
+    let frame = output
+        .encode_signal_frame()
+        .expect("encode generated output");
+    let (route, decoded) = Output::decode_signal_frame(&frame).expect("decode generated output");
 
-#[test]
-fn generated_sema_completion_projects_back_to_signal_output() {
-    let output = SemaWriteOutput::upgrade_completed(completion())
-        .with_origin_route(OriginRoute(29))
-        .into_nexus_work()
-        .into_nexus_action()
-        .into_signal_output();
-
-    assert_eq!(output.origin_route(), OriginRoute(29));
-    assert_eq!(output.root().route(), OutputRoute::UpgradeCompleted);
-    match output.into_root() {
+    assert_eq!(route, OutputRoute::UpgradeCompleted);
+    match decoded {
         Output::UpgradeCompleted(completion) => {
             assert_eq!(completion.changed_records, 3);
         }
@@ -85,10 +65,27 @@ fn generated_sema_completion_projects_back_to_signal_output() {
 }
 
 #[test]
-fn generated_trace_vocabulary_names_signal_operation() {
-    let trace = TraceEvent::new(ObjectName::Signal(SignalObjectName::Input(
-        InputRoute::AttemptUpgrade,
-    )));
-
-    assert_eq!(trace.name(), "SignalInputAttemptUpgrade");
+fn generated_contract_surface_excludes_runtime_plane_terms() {
+    for term in [
+        "NexusWork",
+        "NexusAction",
+        "CommandSemaWrite",
+        "CommandSemaRead",
+        "SemaWriteInput",
+        "SemaReadInput",
+        "SemaWriteOutput",
+        "SemaReadOutput",
+        "SignalEngine",
+        "NexusEngine",
+        "SemaEngine",
+    ] {
+        assert!(
+            !SCHEMA_SOURCE.contains(term),
+            "contract schema must not declare runtime term {term}"
+        );
+        assert!(
+            !GENERATED_SCHEMA_RUST.contains(term),
+            "generated contract module must not export runtime term {term}"
+        );
+    }
 }

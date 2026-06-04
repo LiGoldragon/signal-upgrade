@@ -56,12 +56,4 @@
   HandoverRejection { component ComponentName reason HandoverRejectionReason }
   HandoverRejectionReason [SchemaMismatch CommitSequenceAdvanced AlreadyInHandover NotReady]
   DivergenceReason [NotRepresentable TargetUnavailable TargetRejected]
-  NexusWork [(SignalArrived Input) (SemaWriteCompleted SemaWriteOutput) (SemaReadCompleted SemaReadOutput) (EffectCompleted NexusEffectResult)]
-  NexusAction [(CommandSemaWrite SemaWriteInput) (CommandSemaRead SemaReadInput) (ReplyToSignal Output) (CommandEffect NexusEffectCommand) (Continue NexusWork)]
-  NexusEffectCommand [(CallHandoverPeer MirrorPayload)]
-  NexusEffectResult [(HandoverPeerCalled MirrorAcknowledgement)]
-  SemaWriteInput [(AttemptUpgrade Attempt) (ReadyToHandover ReadinessReport) (HandoverCompleted CompletionReport) (Mirror MirrorPayload) (Divergence DivergencePayload) (RecoverFromFailure RecoveryRequest)]
-  SemaReadInput [(Inspect Inspection) (Report ReportQuery) (AskHandoverMarker MarkerRequest)]
-  SemaWriteOutput [(UpgradeCompleted Completion) (UpgradeRejected Rejection) (HandoverAccepted HandoverAcceptance) (HandoverFinalized HandoverFinalization) (MirrorAcknowledged MirrorAcknowledgement) (DivergenceAcknowledged DivergenceAcknowledgement) (RecoveryCompleted RecoveryResult) (HandoverRejected HandoverRejection) (RequestUnimplemented RequestUnimplemented)]
-  SemaReadOutput [(InspectionReported InspectionReported) (Reported Reported) (HandoverMarker HandoverMarker) (RequestUnimplemented RequestUnimplemented)]
 }
