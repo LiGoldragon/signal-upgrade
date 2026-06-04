@@ -45,7 +45,8 @@ containers. The projection policy for those bytes lives in
   NOTA and Signal frames.
 - `tests/generated_schema.rs` exercises generated Input/Output
   short-header/frame round-trips and guards against generated
-  Nexus/SEMA runtime terms in this contract.
+  Nexus/SEMA runtime terms, trace/mail helpers, and generic plane
+  envelopes in this contract.
 - `examples/canonical.nota` records stable catalogue text examples.
 
 ## Invariants
@@ -53,6 +54,8 @@ containers. The projection policy for those bytes lives in
 - Contract operation roots are contract-local verbs in verb form.
 - The contract crate carries no daemon, actor, database, or Tokio
   runtime code.
+- The generated schema module is emitted with the schema-rust
+  `WireContract` target, so it carries wire types/codecs only.
 - The ordinary and owner contracts remain separate repositories.
 - This crate depends on `version-projection`; handover records use its
   `ComponentName`, `ContractVersion`, and `RecordKind` vocabulary.
