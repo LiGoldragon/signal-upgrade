@@ -38,8 +38,10 @@ containers. The projection policy for those bytes lives in
 - `schema/lib.schema` declares the first real schema-next source for
   the ordinary upgrade signal surface and its generated wire-only
   Input/Output roots.
-- `schema/lib.asschema` and `src/schema/lib.rs` are checked-in
-  generated artifacts; `build.rs` fails the build when they are stale.
+- `src/schema/lib.rs` is the checked-in generated Rust interface;
+  `build.rs` deserializes `schema/lib.schema` into `SchemaSource`,
+  validates the schema-in-Rust value through text and rkyv round-trips,
+  and fails the build when the generated Rust is stale.
 - `src/lib.rs` declares the merged catalogue and handover channel.
 - `tests/round_trip.rs` proves the merged channel round-trips through
   NOTA and Signal frames.
