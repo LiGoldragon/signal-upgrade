@@ -6,9 +6,7 @@ pub type Boolean = bool;
 pub type Path = std::string::String;
 
 #[cfg(feature = "nota-text")]
-pub use nota_next::{
-    NotaDecode, NotaDecodeError, NotaEncode, NotaSource,
-};
+pub use nota_next::{NotaDecode, NotaDecodeError, NotaEncode, NotaSource};
 
 pub type ComponentName = String;
 
@@ -133,9 +131,9 @@ pub struct Time {
 pub struct HandoverMarker {
     pub component: ComponentName,
     pub schema_hash: ContractVersion,
-    pub commit_sequence: Integer,
-    pub write_counter: Integer,
-    pub last_record_identifier: Option<Integer>,
+    pub state_sequence: Integer,
+    pub mirrored_write_count: Integer,
+    pub record_frontier: Option<Integer>,
     pub recorded_at_date: Date,
     pub recorded_at_time: Time,
 }
@@ -198,7 +196,7 @@ pub struct HandoverFinalization(pub HandoverMarker);
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct MirrorAcknowledgement {
     pub component: ComponentName,
-    pub write_counter: Integer,
+    pub mirrored_write_count: Integer,
 }
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
@@ -226,7 +224,7 @@ pub struct HandoverRejection {
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum HandoverRejectionReason {
     SchemaMismatch,
-    CommitSequenceAdvanced,
+    StateSequenceAdvanced,
     AlreadyInHandover,
     NotReady,
 }
@@ -274,16 +272,13 @@ impl ContractVersion {
     pub fn new(payload: RawBytes) -> Self {
         Self(payload)
     }
-
     pub fn payload(&self) -> &RawBytes {
         &self.0
     }
-
     pub fn into_payload(self) -> RawBytes {
         self.0
     }
 }
-
 impl From<RawBytes> for ContractVersion {
     fn from(payload: RawBytes) -> Self {
         Self::new(payload)
@@ -294,16 +289,13 @@ impl InspectionReported {
     pub fn new(payload: Vec<SupportedMigration>) -> Self {
         Self(payload)
     }
-
     pub fn payload(&self) -> &Vec<SupportedMigration> {
         &self.0
     }
-
     pub fn into_payload(self) -> Vec<SupportedMigration> {
         self.0
     }
 }
-
 impl From<Vec<SupportedMigration>> for InspectionReported {
     fn from(payload: Vec<SupportedMigration>) -> Self {
         Self::new(payload)
@@ -314,16 +306,13 @@ impl RequestUnimplemented {
     pub fn new(payload: UnimplementedReason) -> Self {
         Self(payload)
     }
-
     pub fn payload(&self) -> &UnimplementedReason {
         &self.0
     }
-
     pub fn into_payload(self) -> UnimplementedReason {
         self.0
     }
 }
-
 impl From<UnimplementedReason> for RequestUnimplemented {
     fn from(payload: UnimplementedReason) -> Self {
         Self::new(payload)
@@ -334,16 +323,13 @@ impl MarkerRequest {
     pub fn new(payload: ComponentName) -> Self {
         Self(payload)
     }
-
     pub fn payload(&self) -> &ComponentName {
         &self.0
     }
-
     pub fn into_payload(self) -> ComponentName {
         self.0
     }
 }
-
 impl From<ComponentName> for MarkerRequest {
     fn from(payload: ComponentName) -> Self {
         Self::new(payload)
@@ -354,16 +340,13 @@ impl HandoverAcceptance {
     pub fn new(payload: HandoverMarker) -> Self {
         Self(payload)
     }
-
     pub fn payload(&self) -> &HandoverMarker {
         &self.0
     }
-
     pub fn into_payload(self) -> HandoverMarker {
         self.0
     }
 }
-
 impl From<HandoverMarker> for HandoverAcceptance {
     fn from(payload: HandoverMarker) -> Self {
         Self::new(payload)
@@ -374,16 +357,13 @@ impl HandoverFinalization {
     pub fn new(payload: HandoverMarker) -> Self {
         Self(payload)
     }
-
     pub fn payload(&self) -> &HandoverMarker {
         &self.0
     }
-
     pub fn into_payload(self) -> HandoverMarker {
         self.0
     }
 }
-
 impl From<HandoverMarker> for HandoverFinalization {
     fn from(payload: HandoverMarker) -> Self {
         Self::new(payload)
@@ -406,35 +386,27 @@ impl Input {
     pub fn inspect(payload: Inspection) -> Self {
         Self::Inspect(payload)
     }
-
     pub fn attempt_upgrade(payload: Attempt) -> Self {
         Self::AttemptUpgrade(payload)
     }
-
     pub fn report(payload: ReportQuery) -> Self {
         Self::Report(payload)
     }
-
     pub fn ask_handover_marker(payload: ComponentName) -> Self {
         Self::AskHandoverMarker(MarkerRequest::new(payload))
     }
-
     pub fn ready_to_handover(payload: ReadinessReport) -> Self {
         Self::ReadyToHandover(payload)
     }
-
     pub fn handover_completed(payload: CompletionReport) -> Self {
         Self::HandoverCompleted(payload)
     }
-
     pub fn mirror(payload: MirrorPayload) -> Self {
         Self::Mirror(payload)
     }
-
     pub fn divergence(payload: DivergencePayload) -> Self {
         Self::Divergence(payload)
     }
-
     pub fn recover_from_failure(payload: RecoveryRequest) -> Self {
         Self::RecoverFromFailure(payload)
     }
@@ -444,47 +416,36 @@ impl Output {
     pub fn inspection_reported(payload: Vec<SupportedMigration>) -> Self {
         Self::InspectionReported(InspectionReported::new(payload))
     }
-
     pub fn upgrade_completed(payload: Completion) -> Self {
         Self::UpgradeCompleted(payload)
     }
-
     pub fn upgrade_rejected(payload: Rejection) -> Self {
         Self::UpgradeRejected(payload)
     }
-
     pub fn reported(payload: Reported) -> Self {
         Self::Reported(payload)
     }
-
     pub fn handover_marker(payload: HandoverMarker) -> Self {
         Self::HandoverMarker(payload)
     }
-
     pub fn handover_accepted(payload: HandoverMarker) -> Self {
         Self::HandoverAccepted(HandoverAcceptance::new(payload))
     }
-
     pub fn handover_finalized(payload: HandoverMarker) -> Self {
         Self::HandoverFinalized(HandoverFinalization::new(payload))
     }
-
     pub fn mirror_acknowledged(payload: MirrorAcknowledgement) -> Self {
         Self::MirrorAcknowledged(payload)
     }
-
     pub fn divergence_acknowledged(payload: DivergenceAcknowledgement) -> Self {
         Self::DivergenceAcknowledged(payload)
     }
-
     pub fn recovery_completed(payload: RecoveryResult) -> Self {
         Self::RecoveryCompleted(payload)
     }
-
     pub fn handover_rejected(payload: HandoverRejection) -> Self {
         Self::HandoverRejected(payload)
     }
-
     pub fn request_unimplemented(payload: UnimplementedReason) -> Self {
         Self::RequestUnimplemented(RequestUnimplemented::new(payload))
     }
@@ -621,7 +582,6 @@ impl ContractVersion {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -632,7 +592,6 @@ impl Version {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -643,7 +602,6 @@ impl SupportedMigration {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -654,7 +612,6 @@ impl Inspection {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -665,7 +622,6 @@ impl Attempt {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -676,7 +632,6 @@ impl ReportQuery {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -687,7 +642,6 @@ impl InspectionReported {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -698,7 +652,6 @@ impl Completion {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -709,7 +662,6 @@ impl RejectionReason {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -720,7 +672,6 @@ impl Rejection {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -731,7 +682,6 @@ impl Reported {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -742,7 +692,6 @@ impl UnimplementedReason {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -753,7 +702,6 @@ impl RequestUnimplemented {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -764,7 +712,6 @@ impl Date {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -775,7 +722,6 @@ impl Time {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -786,7 +732,6 @@ impl HandoverMarker {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -797,7 +742,6 @@ impl MarkerRequest {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -808,7 +752,6 @@ impl ReadinessReport {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -819,7 +762,6 @@ impl CompletionReport {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -830,7 +772,6 @@ impl MirrorPayload {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -841,7 +782,6 @@ impl DivergencePayload {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -852,7 +792,6 @@ impl RecoveryRequest {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -863,7 +802,6 @@ impl HandoverAcceptance {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -874,7 +812,6 @@ impl HandoverFinalization {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -885,7 +822,6 @@ impl MirrorAcknowledgement {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -896,7 +832,6 @@ impl DivergenceAcknowledgement {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -907,7 +842,6 @@ impl RecoveryResult {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -918,7 +852,6 @@ impl HandoverRejection {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -929,7 +862,6 @@ impl HandoverRejectionReason {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -940,7 +872,6 @@ impl DivergenceReason {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -951,7 +882,6 @@ impl Input {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -960,12 +890,10 @@ impl Input {
 #[cfg(feature = "nota-text")]
 impl std::str::FromStr for Input {
     type Err = NotaDecodeError;
-
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         NotaSource::new(source).parse::<Self>()
     }
 }
-
 #[cfg(feature = "nota-text")]
 impl std::fmt::Display for Input {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -978,7 +906,6 @@ impl Output {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-
     pub fn to_nota(&self) -> String {
         <Self as NotaEncode>::to_nota(self)
     }
@@ -987,12 +914,10 @@ impl Output {
 #[cfg(feature = "nota-text")]
 impl std::str::FromStr for Output {
     type Err = NotaDecodeError;
-
     fn from_str(source: &str) -> Result<Self, Self::Err> {
         NotaSource::new(source).parse::<Self>()
     }
 }
-
 #[cfg(feature = "nota-text")]
 impl std::fmt::Display for Output {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -1025,7 +950,6 @@ pub mod short_header {
 }
 
 const SIGNAL_SHORT_HEADER_BYTE_COUNT: usize = 8;
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SignalFrameError {
     ArchiveEncode,
@@ -1034,23 +958,39 @@ pub enum SignalFrameError {
     UnknownHeader { root_enum: &'static str, header: u64 },
     HeaderMismatch { expected: u64, found: u64 },
 }
-
 impl std::fmt::Display for SignalFrameError {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Self::ArchiveEncode => formatter.write_str("failed to encode rkyv archive"),
             Self::ArchiveDecode => formatter.write_str("failed to decode rkyv archive"),
-            Self::FrameTooShort { found } => write!(formatter, "signal frame too short: {found} bytes"),
-            Self::UnknownHeader { root_enum, header } => write!(formatter, "unknown {root_enum} short header 0x{header:016X}"),
-            Self::HeaderMismatch { expected, found } => write!(formatter, "decoded payload header mismatch: expected 0x{expected:016X}, found 0x{found:016X}"),
+            Self::FrameTooShort { found } => {
+                write!(formatter, "signal frame too short: {found} bytes")
+            }
+            Self::UnknownHeader { root_enum, header } => {
+                write!(formatter, "unknown {root_enum} short header 0x{header:016X}")
+            }
+            Self::HeaderMismatch { expected, found } => {
+                write!(
+                    formatter,
+                    "decoded payload header mismatch: expected 0x{expected:016X}, found 0x{found:016X}"
+                )
+            }
         }
     }
 }
-
 impl std::error::Error for SignalFrameError {}
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+)]
 pub enum InputRoute {
     Inspect,
     AttemptUpgrade,
@@ -1064,7 +1004,16 @@ pub enum InputRoute {
 }
 
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Copy, Debug, PartialEq, Eq)]
+#[derive(
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+)]
 pub enum OutputRoute {
     InspectionReported,
     UpgradeCompleted,
@@ -1094,7 +1043,6 @@ impl Input {
             Self::RecoverFromFailure(_) => InputRoute::RecoverFromFailure,
         }
     }
-
     pub fn short_header(&self) -> u64 {
         match self {
             Self::Inspect(_) => short_header::INPUT_INSPECT,
@@ -1108,7 +1056,6 @@ impl Input {
             Self::RecoverFromFailure(_) => short_header::INPUT_RECOVER_FROM_FAILURE,
         }
     }
-
     pub fn route_from_short_header(header: u64) -> Result<InputRoute, SignalFrameError> {
         match header {
             short_header::INPUT_INSPECT => Ok(InputRoute::Inspect),
@@ -1119,33 +1066,50 @@ impl Input {
             short_header::INPUT_HANDOVER_COMPLETED => Ok(InputRoute::HandoverCompleted),
             short_header::INPUT_MIRROR => Ok(InputRoute::Mirror),
             short_header::INPUT_DIVERGENCE => Ok(InputRoute::Divergence),
-            short_header::INPUT_RECOVER_FROM_FAILURE => Ok(InputRoute::RecoverFromFailure),
-            _ => Err(SignalFrameError::UnknownHeader { root_enum: "Input", header }),
+            short_header::INPUT_RECOVER_FROM_FAILURE => {
+                Ok(InputRoute::RecoverFromFailure)
+            }
+            _ => {
+                Err(SignalFrameError::UnknownHeader {
+                    root_enum: "Input",
+                    header,
+                })
+            }
         }
     }
-
     pub fn encode_signal_frame(&self) -> Result<Vec<u8>, SignalFrameError> {
         let archive = rkyv::to_bytes::<rkyv::rancor::Error>(self)
             .map_err(|_| SignalFrameError::ArchiveEncode)?;
-        let mut frame = Vec::with_capacity(SIGNAL_SHORT_HEADER_BYTE_COUNT + archive.len());
+        let mut frame = Vec::with_capacity(
+            SIGNAL_SHORT_HEADER_BYTE_COUNT + archive.len(),
+        );
         frame.extend_from_slice(&self.short_header().to_le_bytes());
         frame.extend_from_slice(&archive);
         Ok(frame)
     }
-
-    pub fn decode_signal_frame(frame: &[u8]) -> Result<(InputRoute, Self), SignalFrameError> {
+    pub fn decode_signal_frame(
+        frame: &[u8],
+    ) -> Result<(InputRoute, Self), SignalFrameError> {
         if frame.len() < SIGNAL_SHORT_HEADER_BYTE_COUNT {
-            return Err(SignalFrameError::FrameTooShort { found: frame.len() });
+            return Err(SignalFrameError::FrameTooShort {
+                found: frame.len(),
+            });
         }
         let mut header_bytes = [0_u8; SIGNAL_SHORT_HEADER_BYTE_COUNT];
         header_bytes.copy_from_slice(&frame[..SIGNAL_SHORT_HEADER_BYTE_COUNT]);
         let header = u64::from_le_bytes(header_bytes);
         let route = Self::route_from_short_header(header)?;
-        let value = rkyv::from_bytes::<Self, rkyv::rancor::Error>(&frame[SIGNAL_SHORT_HEADER_BYTE_COUNT..])
+        let value = rkyv::from_bytes::<
+            Self,
+            rkyv::rancor::Error,
+        >(&frame[SIGNAL_SHORT_HEADER_BYTE_COUNT..])
             .map_err(|_| SignalFrameError::ArchiveDecode)?;
         let expected = value.short_header();
         if expected != header {
-            return Err(SignalFrameError::HeaderMismatch { expected, found: header });
+            return Err(SignalFrameError::HeaderMismatch {
+                expected,
+                found: header,
+            });
         }
         Ok((route, value))
     }
@@ -1168,7 +1132,6 @@ impl Output {
             Self::RequestUnimplemented(_) => OutputRoute::RequestUnimplemented,
         }
     }
-
     pub fn short_header(&self) -> u64 {
         match self {
             Self::InspectionReported(_) => short_header::OUTPUT_INSPECTION_REPORTED,
@@ -1179,53 +1142,79 @@ impl Output {
             Self::HandoverAccepted(_) => short_header::OUTPUT_HANDOVER_ACCEPTED,
             Self::HandoverFinalized(_) => short_header::OUTPUT_HANDOVER_FINALIZED,
             Self::MirrorAcknowledged(_) => short_header::OUTPUT_MIRROR_ACKNOWLEDGED,
-            Self::DivergenceAcknowledged(_) => short_header::OUTPUT_DIVERGENCE_ACKNOWLEDGED,
+            Self::DivergenceAcknowledged(_) => {
+                short_header::OUTPUT_DIVERGENCE_ACKNOWLEDGED
+            }
             Self::RecoveryCompleted(_) => short_header::OUTPUT_RECOVERY_COMPLETED,
             Self::HandoverRejected(_) => short_header::OUTPUT_HANDOVER_REJECTED,
             Self::RequestUnimplemented(_) => short_header::OUTPUT_REQUEST_UNIMPLEMENTED,
         }
     }
-
-    pub fn route_from_short_header(header: u64) -> Result<OutputRoute, SignalFrameError> {
+    pub fn route_from_short_header(
+        header: u64,
+    ) -> Result<OutputRoute, SignalFrameError> {
         match header {
-            short_header::OUTPUT_INSPECTION_REPORTED => Ok(OutputRoute::InspectionReported),
+            short_header::OUTPUT_INSPECTION_REPORTED => {
+                Ok(OutputRoute::InspectionReported)
+            }
             short_header::OUTPUT_UPGRADE_COMPLETED => Ok(OutputRoute::UpgradeCompleted),
             short_header::OUTPUT_UPGRADE_REJECTED => Ok(OutputRoute::UpgradeRejected),
             short_header::OUTPUT_REPORTED => Ok(OutputRoute::Reported),
             short_header::OUTPUT_HANDOVER_MARKER => Ok(OutputRoute::HandoverMarker),
             short_header::OUTPUT_HANDOVER_ACCEPTED => Ok(OutputRoute::HandoverAccepted),
             short_header::OUTPUT_HANDOVER_FINALIZED => Ok(OutputRoute::HandoverFinalized),
-            short_header::OUTPUT_MIRROR_ACKNOWLEDGED => Ok(OutputRoute::MirrorAcknowledged),
-            short_header::OUTPUT_DIVERGENCE_ACKNOWLEDGED => Ok(OutputRoute::DivergenceAcknowledged),
+            short_header::OUTPUT_MIRROR_ACKNOWLEDGED => {
+                Ok(OutputRoute::MirrorAcknowledged)
+            }
+            short_header::OUTPUT_DIVERGENCE_ACKNOWLEDGED => {
+                Ok(OutputRoute::DivergenceAcknowledged)
+            }
             short_header::OUTPUT_RECOVERY_COMPLETED => Ok(OutputRoute::RecoveryCompleted),
             short_header::OUTPUT_HANDOVER_REJECTED => Ok(OutputRoute::HandoverRejected),
-            short_header::OUTPUT_REQUEST_UNIMPLEMENTED => Ok(OutputRoute::RequestUnimplemented),
-            _ => Err(SignalFrameError::UnknownHeader { root_enum: "Output", header }),
+            short_header::OUTPUT_REQUEST_UNIMPLEMENTED => {
+                Ok(OutputRoute::RequestUnimplemented)
+            }
+            _ => {
+                Err(SignalFrameError::UnknownHeader {
+                    root_enum: "Output",
+                    header,
+                })
+            }
         }
     }
-
     pub fn encode_signal_frame(&self) -> Result<Vec<u8>, SignalFrameError> {
         let archive = rkyv::to_bytes::<rkyv::rancor::Error>(self)
             .map_err(|_| SignalFrameError::ArchiveEncode)?;
-        let mut frame = Vec::with_capacity(SIGNAL_SHORT_HEADER_BYTE_COUNT + archive.len());
+        let mut frame = Vec::with_capacity(
+            SIGNAL_SHORT_HEADER_BYTE_COUNT + archive.len(),
+        );
         frame.extend_from_slice(&self.short_header().to_le_bytes());
         frame.extend_from_slice(&archive);
         Ok(frame)
     }
-
-    pub fn decode_signal_frame(frame: &[u8]) -> Result<(OutputRoute, Self), SignalFrameError> {
+    pub fn decode_signal_frame(
+        frame: &[u8],
+    ) -> Result<(OutputRoute, Self), SignalFrameError> {
         if frame.len() < SIGNAL_SHORT_HEADER_BYTE_COUNT {
-            return Err(SignalFrameError::FrameTooShort { found: frame.len() });
+            return Err(SignalFrameError::FrameTooShort {
+                found: frame.len(),
+            });
         }
         let mut header_bytes = [0_u8; SIGNAL_SHORT_HEADER_BYTE_COUNT];
         header_bytes.copy_from_slice(&frame[..SIGNAL_SHORT_HEADER_BYTE_COUNT]);
         let header = u64::from_le_bytes(header_bytes);
         let route = Self::route_from_short_header(header)?;
-        let value = rkyv::from_bytes::<Self, rkyv::rancor::Error>(&frame[SIGNAL_SHORT_HEADER_BYTE_COUNT..])
+        let value = rkyv::from_bytes::<
+            Self,
+            rkyv::rancor::Error,
+        >(&frame[SIGNAL_SHORT_HEADER_BYTE_COUNT..])
             .map_err(|_| SignalFrameError::ArchiveDecode)?;
         let expected = value.short_header();
         if expected != header {
-            return Err(SignalFrameError::HeaderMismatch { expected, found: header });
+            return Err(SignalFrameError::HeaderMismatch {
+                expected,
+                found: header,
+            });
         }
         Ok((route, value))
     }

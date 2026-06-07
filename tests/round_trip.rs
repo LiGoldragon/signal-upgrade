@@ -79,9 +79,9 @@ fn marker() -> HandoverMarker {
     HandoverMarker {
         component: projection_component(),
         schema_hash: contract_version(1),
-        commit_sequence: 34,
-        write_counter: 55,
-        last_record_identifier: Some(103),
+        state_sequence: 34,
+        mirrored_write_count: 55,
+        record_frontier: Some(103),
         recorded_at_date: Date::new(2026, 5, 22),
         recorded_at_time: Time::new(11, 42, 0),
     }
@@ -225,7 +225,7 @@ fn replies_round_trip_through_signal_frames() {
         }),
         Reply::MirrorAcknowledged(MirrorAcknowledgement {
             component: projection_component(),
-            write_counter: 56,
+            mirrored_write_count: 56,
         }),
         Reply::RecoveryCompleted(RecoveryResult {
             component: projection_component(),
@@ -233,7 +233,7 @@ fn replies_round_trip_through_signal_frames() {
         }),
         Reply::HandoverRejected(HandoverRejection {
             component: projection_component(),
-            reason: HandoverRejectionReason::CommitSequenceAdvanced,
+            reason: HandoverRejectionReason::StateSequenceAdvanced,
         }),
         Reply::RequestUnimplemented(RequestUnimplemented {
             reason: UnimplementedReason::NotBuiltYet,

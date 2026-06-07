@@ -100,7 +100,7 @@ never in this external contract repository.
 This crate does not own:
 
 - `upgrade` daemon runtime, actors, or component lifecycle;
-- `upgrade.redb` or catalogue/selector/migration state tables;
+- `upgrade.sema` or catalogue/selector/migration state tables;
 - socket binding, transport, the private upgrade socket, or version
   handshake policy;
 - migration execution, handover state machine, or selector logic;

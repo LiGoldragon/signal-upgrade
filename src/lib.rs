@@ -207,9 +207,9 @@ impl NotaDecode for Time {
 pub struct HandoverMarker {
     pub component: ProjectionComponentName,
     pub schema_hash: ContractVersion,
-    pub commit_sequence: u64,
-    pub write_counter: u64,
-    pub last_record_identifier: Option<u64>,
+    pub state_sequence: u64,
+    pub mirrored_write_count: u64,
+    pub record_frontier: Option<u64>,
     pub recorded_at_date: Date,
     pub recorded_at_time: Time,
 }
@@ -269,7 +269,7 @@ pub struct HandoverFinalization {
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
 pub struct MirrorAcknowledgement {
     pub component: ProjectionComponentName,
-    pub write_counter: u64,
+    pub mirrored_write_count: u64,
 }
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
@@ -295,7 +295,7 @@ pub struct HandoverRejection {
 )]
 pub enum HandoverRejectionReason {
     SchemaMismatch,
-    CommitSequenceAdvanced,
+    StateSequenceAdvanced,
     AlreadyInHandover,
     NotReady,
 }
