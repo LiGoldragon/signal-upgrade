@@ -3,7 +3,7 @@
 *The ordinary peer-callable wire contract for the `upgrade` runtime.
 Defines the typed channel for upgrade-catalogue inspection, upgrade
 attempts, and the adjacent-version handover protocol. One leg of the
-`upgrade` triad beside the runtime crate `upgrade` and the owner-only
+`upgrade` triad beside the runtime crate `upgrade` and the meta policy
 contract `meta-signal-upgrade`. Companion to `ARCHITECTURE.md` and
 `Cargo.toml`. Maintenance: `primary/skills/repo-intent.md`.*
 
@@ -12,7 +12,7 @@ contract `meta-signal-upgrade`. Companion to `ARCHITECTURE.md` and
 This file carries only the intent that is FOR this `signal-upgrade`
 contract. Workspace-shape intent stays in the primary workspace
 `primary/INTENT.md`. Component daemon intent stays in
-`upgrade/INTENT.md`. Owner-only policy and selector authority intent
+`upgrade/INTENT.md`. Meta policy and selector authority intent
 stays in `meta-signal-upgrade/INTENT.md`.
 
 ## Why this repo exists
@@ -23,7 +23,7 @@ stays in `meta-signal-upgrade/INTENT.md`.
 inspection and outcome reporting (`Inspect`, `AttemptUpgrade`, `Report`)
 together with the adjacent-version handover protocol (`AskHandoverMarker`,
 `ReadyToHandover`, `HandoverCompleted`, `Mirror`, `Divergence`,
-`RecoverFromFailure`). Owner-only catalogue policy and emergency selector
+`RecoverFromFailure`). Meta catalogue policy and emergency selector
 control stay in `meta-signal-upgrade`; runtime orchestration, migration
 execution, sockets, and durable storage live in `upgrade`.
 
@@ -74,7 +74,7 @@ declares the schema-next source for the ordinary upgrade signal surface;
 `build.rs` deserializes it into `SchemaSource`, validates the
 schema-in-Rust value through text and rkyv round-trips, and fails the
 build when the generated `src/schema/lib.rs` is stale. The generated
-module is emitted with the schema-rust `WireContract` target, so it
+module is emitted with the `schema-rust-next` `WireContract` target, so it
 carries wire types and codecs ONLY — zero engine traits. Daemon-internal
 Signal/Nexus/SEMA plane schemas live inside the `upgrade` runtime crate,
 never in this external contract repository.
@@ -86,7 +86,7 @@ never in this external contract repository.
 - No runtime code: no daemon, no actors, no tokio, no socket binding, no
   database, no migration execution, no systemd unit control, no handover
   logic.
-- The ordinary and owner contracts remain separate repositories.
+- The ordinary and meta contracts remain separate repositories.
 - This crate depends on `version-projection`; handover records use its
   `ComponentName`, `ContractVersion`, and `RecordKind` vocabulary.
 - Every operation and reply round-trips through NOTA and Signal frames;
@@ -104,7 +104,7 @@ This crate does not own:
 - socket binding, transport, the private upgrade socket, or version
   handshake policy;
 - migration execution, handover state machine, or selector logic;
-- owner-only catalogue policy and selector authority
+- meta catalogue policy and selector authority
   (`meta-signal-upgrade`);
 - raw-byte projection policy (that is `version-projection`).
 
@@ -114,7 +114,7 @@ This crate does not own:
   schema-next migration, and the byte-container discipline.
 - `../upgrade/INTENT.md` — daemon-side intent (schema-driven planes,
   migration orchestration, handover driver).
-- `../meta-signal-upgrade/INTENT.md` — owner-only catalogue policy and
+- `../meta-signal-upgrade/INTENT.md` — meta catalogue policy and
   selector authority contract.
 - `../version-projection/ARCHITECTURE.md` — projection library for
   handover record bytes.

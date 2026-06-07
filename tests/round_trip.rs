@@ -5,12 +5,12 @@ use signal_frame::{
 };
 use signal_upgrade::{
     Attempt, Completion, CompletionReport, ComponentName, Date, DivergencePayload,
-    DivergenceReason, Frame, FrameBody, HandoverAcceptance, HandoverFinalization, HandoverMarker,
-    HandoverRejection, HandoverRejectionReason, Inspection, InspectionReported, MarkerRequest,
-    MigrationIdentifier, MirrorAcknowledgement, MirrorPayload, Operation, OperationKind,
-    ReadinessReport, RecoveryRequest, RecoveryResult, Rejection, RejectionReason, Reply,
-    ReportQuery, Reported, RequestUnimplemented, SupportedMigration, Time, UnimplementedReason,
-    Version,
+    DivergenceReason, EffectEmitted, EffectOutcome, Frame, FrameBody, HandoverAcceptance,
+    HandoverFinalization, HandoverMarker, HandoverRejection, HandoverRejectionReason, Inspection,
+    InspectionReported, MarkerRequest, MigrationIdentifier, MirrorAcknowledgement, MirrorPayload,
+    Operation, OperationKind, ReadinessReport, RecoveryRequest, RecoveryResult, Rejection,
+    RejectionReason, Reply, ReportQuery, Reported, RequestUnimplemented, SupportedMigration, Time,
+    UnimplementedReason, Version,
 };
 use version_projection::{ComponentName as ProjectionComponentName, ContractVersion, RecordKind};
 
@@ -267,6 +267,22 @@ fn contract_owned_operation_kind_is_generated_for_both_surfaces() {
         .kind(),
         OperationKind::RecoverFromFailure
     );
+}
+
+#[test]
+fn effect_event_uses_contract_owned_outcome_not_sema_observation() {
+    let event = EffectEmitted {
+        operation: OperationKind::AttemptUpgrade,
+        outcome: EffectOutcome::UpgradeCompleted,
+    };
+
+    let encoded = encode(&event);
+    assert_eq!(encoded, "(AttemptUpgrade UpgradeCompleted)");
+    assert!(!encoded.contains("Sema"));
+
+    let mut decoder = Decoder::new(&encoded);
+    let recovered = EffectEmitted::decode(&mut decoder).expect("decode event");
+    assert_eq!(recovered, event);
 }
 
 #[test]

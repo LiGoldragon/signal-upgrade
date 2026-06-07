@@ -4,7 +4,7 @@
 
 `signal-upgrade` owns the peer-callable wire vocabulary for the
 `upgrade` runtime. It is one leg of the `upgrade` triad beside the
-runtime crate `upgrade` and the owner-only contract
+runtime crate `upgrade` and the meta policy contract
 `meta-signal-upgrade`.
 
 ## Boundaries
@@ -56,9 +56,9 @@ containers. The projection policy for those bytes lives in
 - Contract operation roots are contract-local verbs in verb form.
 - The contract crate carries no daemon, actor, database, or Tokio
   runtime code.
-- The generated schema module is emitted with the schema-rust
+- The generated schema module is emitted with `schema-rust-next`
   `WireContract` target, so it carries wire types/codecs only.
-- The ordinary and owner contracts remain separate repositories.
+- The ordinary and meta contracts remain separate repositories.
 - This crate depends on `version-projection`; handover records use its
   `ComponentName`, `ContractVersion`, and `RecordKind` vocabulary.
 
@@ -69,7 +69,7 @@ schema-next artifacts beside the hand-written `signal_channel!`
 surface. The generated module is a witness surface until the runtime
 cutover replaces the hand-written contract path.
 
-**Target:** this crate's hand-written `signal_channel!` invocation + typed records (catalogue inspection, attempt-upgrade verb, handover-protocol verbs, mirror/divergence/recovery records) converts to a single `signal-upgrade/signal-upgrade.schema` file. The brilliant macro library (`primary-ezqx.1`) reads the schema + emits the wire types, ShortHeader projection, dispatcher, VersionProjection, and storage descriptors for any consumer-side persistence.
+**Target:** this crate's hand-written `signal_channel!` invocation + typed records (catalogue inspection, attempt-upgrade verb, handover-protocol verbs, mirror/divergence/recovery records) converts fully to the checked-in `schema/lib.schema` source. `schema-rust-next` emits the wire types, ShortHeader projection, dispatcher, VersionProjection, and storage descriptors for any consumer-side persistence.
 
 **Sequence:** Spirit pilots `primary-ezqx.1` first; this contract's schema cutover then absorbs the merged surface (`AttemptUpgrade` + handover-protocol verbs) into one schema file as part of the upgrade-triad-as-schema-host work named in the `upgrade` runtime's ARCH. Because the upgrade triad is the natural home for the schema-daemon registry (per /326-v13 §4), this contract's cutover may land tightly coupled with the runtime's, not as a separate operator pass.
 

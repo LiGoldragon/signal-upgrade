@@ -14,7 +14,6 @@ pub mod schema {
 use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode, NotaEnum, NotaRecord, NotaTransparent};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_frame::signal_channel;
-use signal_sema::SemaObservation;
 use version_projection::{ComponentName as ProjectionComponentName, ContractVersion, RecordKind};
 
 #[derive(
@@ -349,5 +348,25 @@ pub struct OperationReceived {
 
 #[derive(Archive, RkyvSerialize, RkyvDeserialize, NotaRecord, Debug, Clone, PartialEq, Eq)]
 pub struct EffectEmitted {
-    pub observation: SemaObservation,
+    pub operation: OperationKind,
+    pub outcome: EffectOutcome,
+}
+
+#[derive(
+    Archive, RkyvSerialize, RkyvDeserialize, NotaEnum, Debug, Clone, Copy, PartialEq, Eq, Hash,
+)]
+pub enum EffectOutcome {
+    InspectionReported,
+    UpgradeCompleted,
+    UpgradeRejected,
+    Reported,
+    HandoverMarkerReturned,
+    HandoverAccepted,
+    HandoverFinalized,
+    MirrorAcknowledged,
+    DivergenceAcknowledged,
+    RecoveryCompleted,
+    HandoverRejected,
+    RequestUnimplemented,
+    NoChange,
 }
