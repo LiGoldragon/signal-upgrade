@@ -1,4 +1,4 @@
-use nota_codec::{Decoder, Encoder, NotaDecode, NotaEncode};
+use nota_next::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply as FrameReply, RequestPayload,
     SessionEpoch, SubReply,
@@ -130,9 +130,7 @@ fn round_trip_reply(reply: Reply) -> Reply {
 }
 
 fn encode<T: NotaEncode>(value: &T) -> String {
-    let mut encoder = Encoder::new();
-    value.encode(&mut encoder).expect("encode nota");
-    encoder.into_string()
+    value.to_nota()
 }
 
 fn round_trip_nota<T>(value: T, expected: &str)
@@ -142,8 +140,7 @@ where
     let encoded = encode(&value);
     assert_eq!(encoded, expected);
 
-    let mut decoder = Decoder::new(&encoded);
-    let recovered = T::decode(&mut decoder).expect("decode nota");
+    let recovered = NotaSource::new(&encoded).parse::<T>().expect("decode nota");
     assert_eq!(recovered, value);
     assert!(
         CANONICAL.contains(expected),
@@ -280,8 +277,9 @@ fn effect_event_uses_contract_owned_outcome_not_sema_observation() {
     assert_eq!(encoded, "(AttemptUpgrade UpgradeCompleted)");
     assert!(!encoded.contains("Sema"));
 
-    let mut decoder = Decoder::new(&encoded);
-    let recovered = EffectEmitted::decode(&mut decoder).expect("decode event");
+    let recovered = NotaSource::new(&encoded)
+        .parse::<EffectEmitted>()
+        .expect("decode event");
     assert_eq!(recovered, event);
 }
 
@@ -290,25 +288,25 @@ fn canonical_catalogue_nota_examples_round_trip() {
     round_trip_nota(Operation::Inspect(Inspection::All), "(Inspect All)");
     round_trip_nota(
         Operation::Inspect(Inspection::Component(component())),
-        "(Inspect (Component persona-spirit))",
+        "(Inspect (Component [persona-spirit]))",
     );
     round_trip_nota(
         Operation::AttemptUpgrade(attempt()),
-        "(AttemptUpgrade (persona-spirit (0 1 0) (0 1 1)))",
+        "(AttemptUpgrade ([persona-spirit] (0 1 0) (0 1 1)))",
     );
     round_trip_nota(
         Operation::Report(ReportQuery::Component(component())),
-        "(Report (Component persona-spirit))",
+        "(Report (Component [persona-spirit]))",
     );
     round_trip_nota(
         Reply::InspectionReported(InspectionReported {
             migrations: vec![supported_migration()],
         }),
-        "(InspectionReported ([(persona-spirit (0 1 0) (0 1 1) persona-spirit-0-1-0-to-0-1-1)]))",
+        "(InspectionReported ([([persona-spirit] (0 1 0) (0 1 1) [persona-spirit-0-1-0-to-0-1-1])]))",
     );
     round_trip_nota(
         Reply::UpgradeCompleted(completion()),
-        "(UpgradeCompleted (persona-spirit (0 1 0) (0 1 1) persona-spirit-0-1-0-to-0-1-1 103))",
+        "(UpgradeCompleted ([persona-spirit] (0 1 0) (0 1 1) [persona-spirit-0-1-0-to-0-1-1] 103))",
     );
     round_trip_nota(
         Reply::UpgradeRejected(Rejection {
@@ -317,7 +315,7 @@ fn canonical_catalogue_nota_examples_round_trip() {
             target: Version::new(0, 1, 2),
             reason: RejectionReason::UnsupportedMigration,
         }),
-        "(UpgradeRejected (persona-spirit (0 1 0) (0 1 2) UnsupportedMigration))",
+        "(UpgradeRejected ([persona-spirit] (0 1 0) (0 1 2) UnsupportedMigration))",
     );
     round_trip_nota(
         Reply::RequestUnimplemented(RequestUnimplemented {
@@ -334,8 +332,7 @@ fn handover_marker_reply_round_trips_through_nota() {
 
     assert!(text.starts_with("(HandoverMarker (persona-spirit "));
 
-    let mut decoder = Decoder::new(&text);
-    let decoded = Reply::decode(&mut decoder).expect("decode");
+    let decoded = NotaSource::new(&text).parse::<Reply>().expect("decode");
     assert_eq!(decoded, reply);
 }
 
