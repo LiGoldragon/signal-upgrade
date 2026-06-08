@@ -9,12 +9,13 @@ runtime crate `upgrade` and the meta policy contract
 
 ## Boundaries
 
-This crate owns only typed Signal records, NOTA projection derives,
-frame aliases emitted by `signal_channel!`, and round-trip witnesses.
-It does not own runtime orchestration, socket binding, durable storage,
-migration execution, systemd unit control, or Persona handover logic.
-Daemon-internal Signal/Nexus/SEMA plane schemas live inside the
-`upgrade` runtime crate, not in this external contract repository.
+This crate owns only typed Signal records, optional NOTA projection
+derives, frame aliases emitted by `signal_channel!`, and round-trip
+witnesses. It does not own runtime orchestration, socket binding,
+durable storage, migration execution, systemd unit control, or Persona
+handover logic. Daemon-internal Signal/Nexus/SEMA plane schemas live
+inside the `upgrade` runtime crate, not in this external contract
+repository.
 
 ## Working Shape
 
@@ -44,7 +45,10 @@ containers. The projection policy for those bytes lives in
   and fails the build when the generated Rust is stale.
 - `src/lib.rs` declares the merged catalogue and handover channel.
 - `tests/round_trip.rs` proves the merged channel round-trips through
-  NOTA and Signal frames.
+  Signal frames in default mode and through NOTA under `nota-text`.
+- `tests/dependency_boundary.rs` pins the feature boundary: default
+  builds do not pull `nota-next`, `nota-codec`, or `signal-core`;
+  `nota-text` is the explicit text-codec opt-in.
 - `tests/generated_schema.rs` exercises generated Input/Output
   short-header/frame round-trips and guards against generated
   Nexus/SEMA runtime terms, trace/mail helpers, and generic plane
@@ -58,6 +62,8 @@ containers. The projection policy for those bytes lives in
   runtime code.
 - The generated schema module is emitted with `schema-rust-next`
   `WireContract` target, so it carries wire types/codecs only.
+- NOTA parsing/rendering is feature-gated under `nota-text`; the
+  default contract graph is binary-only for daemon consumers.
 - The ordinary and meta contracts remain separate repositories.
 - This crate depends on `version-projection`; handover records use its
   `ComponentName`, `ContractVersion`, and `RecordKind` vocabulary.

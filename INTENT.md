@@ -79,10 +79,16 @@ carries wire types and codecs ONLY — zero engine traits. Daemon-internal
 Signal/Nexus/SEMA plane schemas live inside the `upgrade` runtime crate,
 never in this external contract repository.
 
+Text projection is explicit. The default contract dependency graph is
+binary-only and must not pull `nota-next`, `nota-codec`, or
+`signal-core`; `nota-text` enables the generated and hand-written NOTA
+derives/impls for CLI and witness builds. Runtime daemons consume this
+contract with default features disabled/empty and speak rkyv frames.
+
 ## Constraints
 
-- This crate carries only typed wire vocabulary, NOTA projection
-  derives, frame aliases, and round-trip witnesses.
+- This crate carries only typed wire vocabulary, optional NOTA
+  projection derives, frame aliases, and round-trip witnesses.
 - No runtime code: no daemon, no actors, no tokio, no socket binding, no
   database, no migration execution, no systemd unit control, no handover
   logic.

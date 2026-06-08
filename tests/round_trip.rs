@@ -1,3 +1,4 @@
+#[cfg(feature = "nota-text")]
 use nota_next::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, NonEmpty, Reply as FrameReply, RequestPayload,
@@ -5,15 +6,18 @@ use signal_frame::{
 };
 use signal_upgrade::{
     Attempt, Completion, CompletionReport, ComponentName, Date, DivergencePayload,
-    DivergenceReason, EffectEmitted, EffectOutcome, Frame, FrameBody, HandoverAcceptance,
-    HandoverFinalization, HandoverMarker, HandoverRejection, HandoverRejectionReason, Inspection,
-    InspectionReported, MarkerRequest, MigrationIdentifier, MirrorAcknowledgement, MirrorPayload,
-    Operation, OperationKind, ReadinessReport, RecoveryRequest, RecoveryResult, Rejection,
-    RejectionReason, Reply, ReportQuery, Reported, RequestUnimplemented, SupportedMigration, Time,
-    UnimplementedReason, Version,
+    DivergenceReason, Frame, FrameBody, HandoverAcceptance, HandoverFinalization, HandoverMarker,
+    HandoverRejection, HandoverRejectionReason, Inspection, InspectionReported, MarkerRequest,
+    MigrationIdentifier, MirrorAcknowledgement, MirrorPayload, Operation, OperationKind,
+    ReadinessReport, RecoveryRequest, RecoveryResult, Rejection, RejectionReason, Reply,
+    ReportQuery, Reported, RequestUnimplemented, SupportedMigration, Time, UnimplementedReason,
+    Version,
 };
+#[cfg(feature = "nota-text")]
+use signal_upgrade::{EffectEmitted, EffectOutcome};
 use version_projection::{ComponentName as ProjectionComponentName, ContractVersion, RecordKind};
 
+#[cfg(feature = "nota-text")]
 const CANONICAL: &str = include_str!("../examples/canonical.nota");
 
 fn exchange() -> ExchangeIdentifier {
@@ -129,10 +133,12 @@ fn round_trip_reply(reply: Reply) -> Reply {
     }
 }
 
+#[cfg(feature = "nota-text")]
 fn encode<T: NotaEncode>(value: &T) -> String {
     value.to_nota()
 }
 
+#[cfg(feature = "nota-text")]
 fn round_trip_nota<T>(value: T, expected: &str)
 where
     T: NotaEncode + NotaDecode + PartialEq + std::fmt::Debug,
@@ -267,6 +273,7 @@ fn contract_owned_operation_kind_is_generated_for_both_surfaces() {
 }
 
 #[test]
+#[cfg(feature = "nota-text")]
 fn effect_event_uses_contract_owned_outcome_not_sema_observation() {
     let event = EffectEmitted {
         operation: OperationKind::AttemptUpgrade,
@@ -284,6 +291,7 @@ fn effect_event_uses_contract_owned_outcome_not_sema_observation() {
 }
 
 #[test]
+#[cfg(feature = "nota-text")]
 fn canonical_catalogue_nota_examples_round_trip() {
     round_trip_nota(Operation::Inspect(Inspection::All), "(Inspect All)");
     round_trip_nota(
@@ -326,6 +334,7 @@ fn canonical_catalogue_nota_examples_round_trip() {
 }
 
 #[test]
+#[cfg(feature = "nota-text")]
 fn handover_marker_reply_round_trips_through_nota() {
     let reply = Reply::HandoverMarker(marker());
     let text = encode(&reply);
@@ -346,6 +355,7 @@ fn mirror_payload_carries_source_target_kind_and_raw_bytes() {
 }
 
 #[test]
+#[cfg(feature = "nota-text")]
 fn divergence_reason_encodes_as_unit_variant() {
     let reason = DivergenceReason::NotRepresentable;
     assert_eq!(encode(&reason), "NotRepresentable");

@@ -11,23 +11,17 @@ pub mod schema {
     pub mod lib;
 }
 
+#[cfg(feature = "nota-text")]
 use nota_next::{Block, Delimiter, NotaBlock, NotaDecode, NotaDecodeError, NotaEncode};
 use rkyv::{Archive, Deserialize as RkyvDeserialize, Serialize as RkyvSerialize};
 use signal_frame::signal_channel;
 use version_projection::{ComponentName as ProjectionComponentName, ContractVersion, RecordKind};
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct ComponentName(String);
 
 impl ComponentName {
@@ -40,18 +34,11 @@ impl ComponentName {
     }
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq, Hash)]
 pub struct MigrationIdentifier(String);
 
 impl MigrationIdentifier {
@@ -64,19 +51,11 @@ impl MigrationIdentifier {
     }
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Version {
     pub major: u64,
     pub minor: u64,
@@ -93,9 +72,11 @@ impl Version {
     }
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct SupportedMigration {
     pub component: ComponentName,
     pub source: Version,
@@ -103,41 +84,51 @@ pub struct SupportedMigration {
     pub identifier: MigrationIdentifier,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub enum Inspection {
     All,
     Component(ComponentName),
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Attempt {
     pub component: ComponentName,
     pub source: Version,
     pub target: Version,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub enum ReportQuery {
     All,
     Component(ComponentName),
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct InspectionReported {
     pub migrations: Vec<SupportedMigration>,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Completion {
     pub component: ComponentName,
     pub source: Version,
@@ -146,28 +137,22 @@ pub struct Completion {
     pub changed_records: u64,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum RejectionReason {
     UnsupportedMigration,
     ComponentMismatch,
     MigrationFailed,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Rejection {
     pub component: ComponentName,
     pub source: Version,
@@ -175,52 +160,40 @@ pub struct Rejection {
     pub reason: RejectionReason,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct Reported {
     pub completions: Vec<Completion>,
     pub rejections: Vec<Rejection>,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum UnimplementedReason {
     NotBuiltYet,
     IntegrationNotLanded,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct RequestUnimplemented {
     pub reason: UnimplementedReason,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Date {
     pub year: u64,
     pub month: u64,
@@ -233,19 +206,11 @@ impl Date {
     }
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub struct Time {
     pub hour: u64,
     pub minute: u64,
@@ -262,9 +227,11 @@ impl Time {
     }
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct HandoverMarker {
     pub component: ProjectionComponentName,
     pub schema_hash: ContractVersion,
@@ -275,24 +242,30 @@ pub struct HandoverMarker {
     pub recorded_at_time: Time,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct MarkerRequest {
     pub component: ProjectionComponentName,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct ReadinessReport {
     pub component: ProjectionComponentName,
     pub source_marker: HandoverMarker,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct CompletionReport {
     pub component: ProjectionComponentName,
     pub accepted_marker: HandoverMarker,
@@ -307,6 +280,7 @@ pub struct MirrorPayload {
     pub payload: Vec<u8>,
 }
 
+#[cfg(feature = "nota-text")]
 impl NotaEncode for MirrorPayload {
     fn to_nota(&self) -> String {
         Delimiter::Parenthesis.wrap([
@@ -319,6 +293,7 @@ impl NotaEncode for MirrorPayload {
     }
 }
 
+#[cfg(feature = "nota-text")]
 impl NotaDecode for MirrorPayload {
     fn from_nota_block(block: &Block) -> Result<Self, NotaDecodeError> {
         let fields =
@@ -343,6 +318,7 @@ pub struct DivergencePayload {
     pub payload: Vec<u8>,
 }
 
+#[cfg(feature = "nota-text")]
 impl NotaEncode for DivergencePayload {
     fn to_nota(&self) -> String {
         Delimiter::Parenthesis.wrap([
@@ -356,6 +332,7 @@ impl NotaEncode for DivergencePayload {
     }
 }
 
+#[cfg(feature = "nota-text")]
 impl NotaDecode for DivergencePayload {
     fn from_nota_block(block: &Block) -> Result<Self, NotaDecodeError> {
         let fields = NotaBlock::new(block).expect_children(
@@ -374,11 +351,13 @@ impl NotaDecode for DivergencePayload {
     }
 }
 
+#[cfg(feature = "nota-text")]
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct BytePayload {
     bytes: Vec<u8>,
 }
 
+#[cfg(feature = "nota-text")]
 impl BytePayload {
     fn new(bytes: Vec<u8>) -> Self {
         Self { bytes }
@@ -389,12 +368,14 @@ impl BytePayload {
     }
 }
 
+#[cfg(feature = "nota-text")]
 impl NotaEncode for BytePayload {
     fn to_nota(&self) -> String {
         Delimiter::SquareBracket.wrap(self.bytes.iter().map(u8::to_string))
     }
 }
 
+#[cfg(feature = "nota-text")]
 impl NotaDecode for BytePayload {
     fn from_nota_block(block: &Block) -> Result<Self, NotaDecodeError> {
         let values = Vec::<u64>::from_nota_block(block)?;
@@ -409,73 +390,79 @@ impl NotaDecode for BytePayload {
     }
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct RecoveryRequest {
     pub component: ProjectionComponentName,
     pub failure_identifier: u64,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct HandoverAcceptance {
     pub accepted_marker: HandoverMarker,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct HandoverFinalization {
     pub finalized_marker: HandoverMarker,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct MirrorAcknowledgement {
     pub component: ProjectionComponentName,
     pub mirrored_write_count: u64,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct DivergenceAcknowledgement {
     pub component: ProjectionComponentName,
     pub divergence_identifier: u64,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct RecoveryResult {
     pub component: ProjectionComponentName,
     pub recovered: bool,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct HandoverRejection {
     pub component: ProjectionComponentName,
     pub reason: HandoverRejectionReason,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum HandoverRejectionReason {
     SchemaMismatch,
     StateSequenceAdvanced,
@@ -483,19 +470,11 @@ pub enum HandoverRejectionReason {
     NotReady,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum DivergenceReason {
     NotRepresentable,
     TargetUnavailable,
@@ -535,34 +514,30 @@ signal_channel! {
     }
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct OperationReceived {
     pub operation: OperationKind,
 }
 
-#[derive(
-    Archive, RkyvSerialize, RkyvDeserialize, NotaEncode, NotaDecode, Debug, Clone, PartialEq, Eq,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, PartialEq, Eq)]
 pub struct EffectEmitted {
     pub operation: OperationKind,
     pub outcome: EffectOutcome,
 }
 
-#[derive(
-    Archive,
-    RkyvSerialize,
-    RkyvDeserialize,
-    NotaEncode,
-    NotaDecode,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    Eq,
-    Hash,
+#[cfg_attr(
+    feature = "nota-text",
+    derive(nota_next::NotaEncode, nota_next::NotaDecode)
 )]
+#[derive(Archive, RkyvSerialize, RkyvDeserialize, Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum EffectOutcome {
     InspectionReported,
     UpgradeCompleted,
