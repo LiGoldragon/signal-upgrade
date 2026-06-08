@@ -95,7 +95,16 @@ pub struct Completion {
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+#[derive(
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+)]
 pub enum RejectionReason {
     UnsupportedMigration,
     ComponentMismatch,
@@ -122,7 +131,16 @@ pub struct Reported {
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+#[derive(
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+)]
 pub enum UnimplementedReason {
     NotBuiltYet,
     IntegrationNotLanded,
@@ -260,7 +278,16 @@ pub struct HandoverRejection {
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+#[derive(
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+)]
 pub enum HandoverRejectionReason {
     SchemaMismatch,
     StateSequenceAdvanced,
@@ -270,7 +297,16 @@ pub enum HandoverRejectionReason {
 
 #[rustfmt::skip]
 #[cfg_attr(feature = "nota-text", derive(nota_next::NotaDecode, nota_next::NotaEncode))]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+#[derive(
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq,
+)]
 pub enum DivergenceReason {
     NotRepresentable,
     TargetUnavailable,
@@ -750,8 +786,8 @@ impl RejectionReason {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
+    pub fn to_nota(self) -> String {
+        <Self as NotaEncode>::to_nota(&self)
     }
 }
 
@@ -783,8 +819,8 @@ impl UnimplementedReason {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
+    pub fn to_nota(self) -> String {
+        <Self as NotaEncode>::to_nota(&self)
     }
 }
 
@@ -970,8 +1006,8 @@ impl HandoverRejectionReason {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
+    pub fn to_nota(self) -> String {
+        <Self as NotaEncode>::to_nota(&self)
     }
 }
 
@@ -981,8 +1017,8 @@ impl DivergenceReason {
     pub fn from_nota_block(block: &nota_next::Block) -> Result<Self, NotaDecodeError> {
         <Self as NotaDecode>::from_nota_block(block)
     }
-    pub fn to_nota(&self) -> String {
-        <Self as NotaEncode>::to_nota(self)
+    pub fn to_nota(self) -> String {
+        <Self as NotaEncode>::to_nota(&self)
     }
 }
 
