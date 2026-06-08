@@ -1,4 +1,4 @@
-# INTENT — signal-upgrade
+# INTENT - signal-upgrade
 
 *The ordinary peer-callable wire contract for the `upgrade` runtime.
 Defines the typed channel for upgrade-catalogue inspection, upgrade
@@ -43,9 +43,9 @@ The upgrade channel carries:
   has not landed.
 
 `Mirror` and `Divergence` payloads carry raw bytes in their own typed
-containers. Projection policy for those bytes lives in
-`version-projection`; execution and persistence policy lives in the
-`upgrade` runtime.
+containers. Projection policy for those bytes belongs below the
+contract, in runtime/library code; execution and persistence policy
+lives in the `upgrade` runtime.
 
 ## Channels are closed, boundaries are named
 
@@ -69,21 +69,23 @@ contract-local operation verbs":
 
 ## Schema-derived stack
 
-This contract is migrating to the schema-derived stack. `schema/lib.schema`
-declares the schema-next source for the ordinary upgrade signal surface;
-`build.rs` deserializes it into `SchemaSource`, validates the
-schema-in-Rust value through text and rkyv round-trips, and fails the
-build when the generated `src/schema/lib.rs` is stale. The generated
-module is emitted with the `schema-rust-next` `WireContract` target, so it
-carries wire types and codecs ONLY — zero engine traits. Daemon-internal
-Signal/Nexus/SEMA plane schemas live inside the `upgrade` runtime crate,
-never in this external contract repository.
+This contract is schema-derived. `schema/lib.schema` declares the
+schema-next source for the ordinary upgrade signal surface; `build.rs`
+deserializes it into `SchemaSource`, validates the schema-in-Rust value
+through text and rkyv round-trips, and fails the build when the generated
+`src/schema/lib.rs` is stale. The generated module is emitted with the
+`schema-rust-next` `WireContract` target, so it carries wire types,
+short-header codecs, and `signal-frame` request/reply aliases only -
+zero engine traits. Daemon-internal Signal/Nexus/SEMA plane schemas live
+inside the `upgrade` runtime crate, never in this external contract
+repository.
 
 Text projection is explicit. The default contract dependency graph is
 binary-only and must not pull `nota-next`, `nota-codec`, or
-`signal-core`; `nota-text` enables the generated and hand-written NOTA
-derives/impls for CLI and witness builds. Runtime daemons consume this
+`signal-core`; `nota-text` enables the generated NOTA derives/impls for
+CLI and witness builds. Runtime daemons consume this
 contract with default features disabled/empty and speak rkyv frames.
+There is no parallel hand-written channel surface.
 
 ## Constraints
 
@@ -93,8 +95,9 @@ contract with default features disabled/empty and speak rkyv frames.
   database, no migration execution, no systemd unit control, no handover
   logic.
 - The ordinary and meta contracts remain separate repositories.
-- This crate depends on `version-projection`; handover records use its
-  `ComponentName`, `ContractVersion`, and `RecordKind` vocabulary.
+- Handover records use contract-local `ComponentName`,
+  `ContractVersion`, and `RecordKind` wire nouns. Projection policy is
+  not part of this public Signal contract.
 - Every operation and reply round-trips through NOTA and Signal frames;
   the generated module is guarded against Nexus/SEMA runtime terms,
   trace/mail helpers, and generic plane envelopes.
@@ -112,19 +115,17 @@ This crate does not own:
 - migration execution, handover state machine, or selector logic;
 - meta catalogue policy and selector authority
   (`meta-signal-upgrade`);
-- raw-byte projection policy (that is `version-projection`).
+- raw-byte projection policy below this wire contract.
 
 ## See also
 
-- `ARCHITECTURE.md` — detailed working shape, the merged surface, the
+- `ARCHITECTURE.md` - detailed working shape, the merged surface, the
   schema-next migration, and the byte-container discipline.
-- `../upgrade/INTENT.md` — daemon-side intent (schema-driven planes,
+- `../upgrade/INTENT.md` - daemon-side intent (schema-driven planes,
   migration orchestration, handover driver).
-- `../meta-signal-upgrade/INTENT.md` — meta catalogue policy and
+- `../meta-signal-upgrade/INTENT.md` - meta catalogue policy and
   selector authority contract.
-- `../version-projection/ARCHITECTURE.md` — projection library for
-  handover record bytes.
-- `primary/skills/contract-repo.md` — contract repo discipline and
+- `primary/skills/contract-repo.md` - contract repo discipline and
   naming rules.
-- `primary/skills/component-triad.md` — repo triad structure and wire
+- `primary/skills/component-triad.md` - repo triad structure and wire
   layers.

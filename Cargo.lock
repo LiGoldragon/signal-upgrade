@@ -271,8 +271,8 @@ dependencies = [
 
 [[package]]
 name = "schema-rust-next"
-version = "0.3.0"
-source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#a35eff74419d03e36720765e09c9e53fe87a3089"
+version = "0.5.1"
+source = "git+https://github.com/LiGoldragon/schema-rust-next.git?branch=main#fc7db9fad016384331498c32c73ea5733947aaef"
 dependencies = [
  "prettyplease",
  "proc-macro2",
@@ -314,7 +314,6 @@ dependencies = [
  "schema-rust-next",
  "signal-frame",
  "thiserror",
- "version-projection",
 ]
 
 [[package]]
@@ -389,16 +388,6 @@ checksum = "d258b83ceec21034727ecee8c382cfa6c3e133699b0742c64571814fb420c9f7"
 dependencies = [
  "js-sys",
  "wasm-bindgen",
-]
-
-[[package]]
-name = "version-projection"
-version = "0.1.0"
-source = "git+https://github.com/LiGoldragon/version-projection.git?branch=main#e40fd1493236b4506260a9e53a15e7bbda96951d"
-dependencies = [
- "nota-next",
- "rkyv",
- "thiserror",
 ]
 
 [[package]]

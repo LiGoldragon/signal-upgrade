@@ -18,11 +18,10 @@ driver, or systemd integration.
 
 ## Invariants
 
-- U1 stays scaffold-only. Do not move `sema-upgrade`,
-  `signal-sema-upgrade`, `signal-version-handover`, or Persona code
-  into this crate in U1.
-- U2 is the first population step for the merged working contract.
-- `Mirror` payloads stay raw bytes when U2 lands.
+- `schema/lib.schema` is the source of truth for the public contract.
+- `src/lib.rs` re-exports the generated contract surface; do not add a
+  parallel hand-written channel.
+- `Mirror` payloads stay raw bytes.
 - `RequestUnimplemented` stays available so partial implementations
   can return typed skeleton replies.
 - Round-trip tests cover both NOTA and Signal-frame encoding.
