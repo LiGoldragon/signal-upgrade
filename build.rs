@@ -1,35 +1,10 @@
-use std::{env, path::PathBuf};
-
-use schema_rust_next::build::{CargoSchemaMetadata, GenerationDriver, GenerationPlan};
+use schema_rust_next::build::ContractCrateBuild;
 
 fn main() {
-    SchemaBuild::from_environment().run();
-}
-
-struct SchemaBuild {
-    crate_root: PathBuf,
-}
-
-impl SchemaBuild {
-    fn from_environment() -> Self {
-        Self {
-            crate_root: PathBuf::from(env::var_os("CARGO_MANIFEST_DIR").expect("manifest dir set")),
-        }
-    }
-
-    fn run(&self) {
-        println!("cargo:rerun-if-changed=schema/lib.schema");
-        println!("cargo:rerun-if-changed=src/schema/lib.rs");
-        CargoSchemaMetadata::new("signal-upgrade").emit_schema_directory(&self.crate_root);
-
-        GenerationDriver::new(GenerationPlan::wire_contract(
-            &self.crate_root,
-            "signal-upgrade",
-            "0.2.0",
-        ))
-        .generate()
-        .expect("generate signal-upgrade schema artifacts")
-        .write_or_check("SIGNAL_UPGRADE_UPDATE_SCHEMA_ARTIFACTS")
-        .expect("checked-in signal-upgrade schema artifacts are fresh");
-    }
+    ContractCrateBuild::from_environment(
+        "signal-upgrade",
+        "0.2.0",
+        "SIGNAL_UPGRADE_UPDATE_SCHEMA_ARTIFACTS",
+    )
+    .expect_fresh();
 }
