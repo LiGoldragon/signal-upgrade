@@ -8,8 +8,8 @@ use signal_upgrade::{
     Attempt, Completion, CompletionReport, ComponentName, ContractVersion, Date, DivergencePayload,
     DivergenceReason, Frame, FrameBody, HandoverMarker, HandoverRejection, HandoverRejectionReason,
     Input, InputRoute, Inspection, MirrorAcknowledgement, MirrorPayload, Output, OutputRoute,
-    ReadinessReport, RecordKind, RecoveryRequest, RecoveryResult, Rejection, RejectionReason,
-    ReportQuery, Reported, SupportedMigration, Time, UnimplementedReason, Version,
+    RawByte, RawBytes, ReadinessReport, RecordKind, RecoveryRequest, RecoveryResult, Rejection,
+    RejectionReason, ReportQuery, Reported, SupportedMigration, Time, UnimplementedReason, Version,
 };
 
 #[cfg(feature = "nota-text")]
@@ -24,7 +24,7 @@ fn exchange() -> ExchangeIdentifier {
 }
 
 fn component() -> ComponentName {
-    String::from("persona-spirit")
+    ComponentName::new("persona-spirit")
 }
 
 fn source() -> Version {
@@ -52,7 +52,7 @@ fn supported_migration() -> SupportedMigration {
         component: component(),
         source: source(),
         target: target(),
-        identifier: migration(),
+        identifier: migration().into(),
     }
 }
 
@@ -69,17 +69,21 @@ fn completion() -> Completion {
         component: component(),
         source: source(),
         target: target(),
-        migration: migration(),
+        migration: migration().into(),
         changed_records: 103,
     }
 }
 
 fn contract_version(byte: u64) -> ContractVersion {
-    ContractVersion::new(vec![byte; 32])
+    ContractVersion::new(raw_bytes(vec![byte; 32]))
+}
+
+fn raw_bytes(bytes: Vec<u64>) -> RawBytes {
+    RawBytes::new(bytes.into_iter().map(RawByte::new).collect())
 }
 
 fn record_kind() -> RecordKind {
-    String::from("Entry")
+    RecordKind::new("Entry")
 }
 
 fn marker() -> HandoverMarker {
@@ -108,7 +112,7 @@ fn mirror_payload() -> MirrorPayload {
         source_version: contract_version(1),
         target_version: contract_version(2),
         kind: record_kind(),
-        payload: vec![1, 2, 3],
+        payload: raw_bytes(vec![1, 2, 3]),
     }
 }
 
@@ -163,9 +167,9 @@ where
 fn catalogue_requests_round_trip_through_signal_frames() {
     let inputs = [
         Input::inspect(Inspection::All),
-        Input::inspect(Inspection::component(component())),
+        Input::inspect(Inspection::component(component().into_payload())),
         Input::attempt_upgrade(attempt()),
-        Input::report(ReportQuery::component(component())),
+        Input::report(ReportQuery::component(component().into_payload())),
     ];
 
     for input in inputs {
@@ -192,7 +196,7 @@ fn handover_requests_round_trip_through_signal_frames() {
             target_version: contract_version(2),
             reason: DivergenceReason::NotRepresentable,
             kind: record_kind(),
-            payload: vec![9, 8, 7],
+            payload: raw_bytes(vec![9, 8, 7]),
         }),
         Input::recover_from_failure(RecoveryRequest {
             component: component(),
@@ -286,24 +290,24 @@ fn generated_wire_contract_exposes_signal_frame_request_heads() {
 fn canonical_catalogue_nota_examples_round_trip() {
     round_trip_nota(Input::inspect(Inspection::All), "(Inspect All)");
     round_trip_nota(
-        Input::inspect(Inspection::component(component())),
-        "(Inspect (Component [persona-spirit]))",
+        Input::inspect(Inspection::component(component().into_payload())),
+        "(Inspect (Component persona-spirit))",
     );
     round_trip_nota(
         Input::attempt_upgrade(attempt()),
-        "(AttemptUpgrade ([persona-spirit] (0 1 0) (0 1 1)))",
+        "(AttemptUpgrade (persona-spirit (0 1 0) (0 1 1)))",
     );
     round_trip_nota(
-        Input::report(ReportQuery::component(component())),
-        "(Report (Component [persona-spirit]))",
+        Input::report(ReportQuery::component(component().into_payload())),
+        "(Report (Component persona-spirit))",
     );
     round_trip_nota(
         Output::inspection_reported(vec![supported_migration()]),
-        "(InspectionReported [([persona-spirit] (0 1 0) (0 1 1) [persona-spirit-0-1-0-to-0-1-1])])",
+        "(InspectionReported [(persona-spirit (0 1 0) (0 1 1) persona-spirit-0-1-0-to-0-1-1)])",
     );
     round_trip_nota(
         Output::upgrade_completed(completion()),
-        "(UpgradeCompleted ([persona-spirit] (0 1 0) (0 1 1) [persona-spirit-0-1-0-to-0-1-1] 103))",
+        "(UpgradeCompleted (persona-spirit (0 1 0) (0 1 1) persona-spirit-0-1-0-to-0-1-1 103))",
     );
     round_trip_nota(
         Output::upgrade_rejected(Rejection {
@@ -316,7 +320,7 @@ fn canonical_catalogue_nota_examples_round_trip() {
             },
             reason: RejectionReason::UnsupportedMigration,
         }),
-        "(UpgradeRejected ([persona-spirit] (0 1 0) (0 1 2) UnsupportedMigration))",
+        "(UpgradeRejected (persona-spirit (0 1 0) (0 1 2) UnsupportedMigration))",
     );
     round_trip_nota(
         Output::request_unimplemented(UnimplementedReason::NotBuiltYet),
@@ -330,7 +334,7 @@ fn handover_marker_reply_round_trips_through_nota() {
     let output = Output::handover_marker(marker());
     let text = encode(&output);
 
-    assert!(text.starts_with("(HandoverMarker ([persona-spirit] "));
+    assert!(text.starts_with("(HandoverMarker (persona-spirit "));
 
     let decoded = NotaSource::new(&text).parse::<Output>().expect("decode");
     assert_eq!(decoded, output);

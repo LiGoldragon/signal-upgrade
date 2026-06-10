@@ -15,7 +15,7 @@ fn version(major: u64, minor: u64, patch: u64) -> Version {
 
 fn attempt() -> Attempt {
     Attempt {
-        component: ComponentName::from("persona-spirit"),
+        component: ComponentName::new("persona-spirit"),
         source: version(0, 1, 0),
         target: version(0, 1, 1),
     }
@@ -23,10 +23,10 @@ fn attempt() -> Attempt {
 
 fn completion() -> Completion {
     Completion {
-        component: ComponentName::from("persona-spirit"),
+        component: ComponentName::new("persona-spirit"),
         source: version(0, 1, 0),
         target: version(0, 1, 1),
-        migration: String::from("persona-spirit-0-1-0-to-0-1-1"),
+        migration: String::from("persona-spirit-0-1-0-to-0-1-1").into(),
         changed_records: 3,
     }
 }
