@@ -374,6 +374,24 @@ impl From<String> for ComponentName {
         Self::new(payload)
     }
 }
+#[rustfmt::skip]
+impl std::fmt::Display for ComponentName {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for ComponentName {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for ComponentName {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
+    }
+}
 
 #[rustfmt::skip]
 impl MigrationIdentifier {
@@ -391,6 +409,24 @@ impl MigrationIdentifier {
 impl From<String> for MigrationIdentifier {
     fn from(payload: String) -> Self {
         Self::new(payload)
+    }
+}
+#[rustfmt::skip]
+impl std::fmt::Display for MigrationIdentifier {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for MigrationIdentifier {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for MigrationIdentifier {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
     }
 }
 
@@ -412,6 +448,24 @@ impl From<String> for RecordKind {
         Self::new(payload)
     }
 }
+#[rustfmt::skip]
+impl std::fmt::Display for RecordKind {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl AsRef<str> for RecordKind {
+    fn as_ref(&self) -> &str {
+        self.payload().as_str()
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<&str> for RecordKind {
+    fn eq(&self, other: &&str) -> bool {
+        self.payload() == other
+    }
+}
 
 #[rustfmt::skip]
 impl RawByte {
@@ -429,6 +483,24 @@ impl RawByte {
 impl From<Integer> for RawByte {
     fn from(payload: Integer) -> Self {
         Self::new(payload)
+    }
+}
+#[rustfmt::skip]
+impl std::fmt::Display for RawByte {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.payload().fmt(formatter)
+    }
+}
+#[rustfmt::skip]
+impl PartialEq<u64> for RawByte {
+    fn eq(&self, other: &u64) -> bool {
+        self.payload() == other
+    }
+}
+#[rustfmt::skip]
+impl PartialOrd<u64> for RawByte {
+    fn partial_cmp(&self, other: &u64) -> Option<std::cmp::Ordering> {
+        self.payload().partial_cmp(other)
     }
 }
 
