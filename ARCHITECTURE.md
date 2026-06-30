@@ -13,7 +13,10 @@ This crate owns only typed Signal records, optional NOTA projection
 derives, generated `signal-frame` aliases/codecs, and round-trip
 witnesses. It does not own runtime orchestration, socket binding,
 durable storage, migration execution, systemd unit control, or Persona
-handover logic. Daemon-internal Signal/Nexus/SEMA plane schemas live
+handover logic. It also does not own meta catalogue policy or selector
+authority (those stay in `meta-signal-upgrade`), the private upgrade
+socket or version-handshake policy, or raw-byte projection policy below
+this wire contract. Daemon-internal Signal/Nexus/SEMA plane schemas live
 inside the `upgrade` runtime crate, not in this external contract
 repository.
 
@@ -58,7 +61,15 @@ lives in the `upgrade` runtime.
 
 ## Invariants
 
-- Contract operation roots are contract-local verbs in verb form.
+- Contract operation roots are contract-local verbs in verb form
+  (`Inspect`, `AttemptUpgrade`, `Report`, the handover verbs); the six
+  Sema classification words must not appear as request roots on this
+  wire.
+- Wire enums are closed. No `Unknown` escape hatch.
+- No stringly-typed dispatch. Status and reason fields are typed closed
+  enums.
+- Request payloads do not mint policy revisions, timestamps, or
+  authority sequences; the daemon mints those.
 - The contract crate carries no daemon, actor, database, or Tokio
   runtime code.
 - The generated schema module is emitted with `schema-rust-next`
@@ -69,6 +80,8 @@ lives in the `upgrade` runtime.
 - Handover records use contract-local `ComponentName`,
   `ContractVersion`, and `RecordKind` wire nouns. Projection policy is
   not part of this public Signal contract.
+- Wire dependency pins use named branches or tags, not raw revision
+  hashes.
 
 ## Schema-derived contract
 
