@@ -39,7 +39,7 @@ lives in the `upgrade` runtime.
 
 ## Code Map
 
-- `schema/lib.schema` declares the first real schema-next source for
+- `schema/lib.schema` declares the first real schema source for
   the ordinary upgrade signal surface and its generated wire-only
   Input/Output roots.
 - `src/schema/lib.rs` is the checked-in generated Rust interface;
@@ -51,7 +51,7 @@ lives in the `upgrade` runtime.
 - `tests/round_trip.rs` proves the merged channel round-trips through
   Signal frames in default mode and through NOTA under `nota-text`.
 - `tests/dependency_boundary.rs` pins the feature boundary: default
-  builds do not pull `nota-next`, `nota-codec`, or `signal-core`;
+  builds do not pull `nota`, `nota-codec`, or `signal-core`;
   `nota-text` is the explicit text-codec opt-in.
 - `tests/generated_schema.rs` exercises generated Input/Output
   short-header/frame round-trips and guards against generated
@@ -72,7 +72,7 @@ lives in the `upgrade` runtime.
   authority sequences; the daemon mints those.
 - The contract crate carries no daemon, actor, database, or Tokio
   runtime code.
-- The generated schema module is emitted with `schema-rust-next`
+- The generated schema module is emitted with `schema-rust`
   `WireContract` target, so it carries wire types/codecs only.
 - NOTA parsing/rendering is feature-gated under `nota-text`; the
   default contract graph is binary-only for daemon consumers.
@@ -88,7 +88,7 @@ lives in the `upgrade` runtime.
 **Status:** migrated. The crate's public API is emitted from
 `schema/lib.schema`; there is no parallel hand-written channel surface.
 
-`schema-rust-next` emits the wire types, short-header projection,
+`schema-rust` emits the wire types, short-header projection,
 request/reply frame aliases, and binary codecs. It does not emit daemon
 runtime planes here.
 
