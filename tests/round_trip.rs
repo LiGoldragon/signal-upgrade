@@ -1,5 +1,5 @@
 #[cfg(feature = "nota-text")]
-use nota_next::{NotaDecode, NotaEncode, NotaSource};
+use nota::{NotaDecode, NotaEncode, NotaSource};
 use signal_frame::{
     ExchangeIdentifier, ExchangeLane, LaneSequence, Reply as FrameReply, SessionEpoch,
     SignalOperationHeads, SubReply,
@@ -49,16 +49,16 @@ fn migration() -> String {
 
 fn supported_migration() -> SupportedMigration {
     SupportedMigration {
-        component: component(),
+        component_name: component(),
         source: source(),
         target: target(),
-        identifier: migration().into(),
+        migration_identifier: migration().into(),
     }
 }
 
 fn attempt() -> Attempt {
     Attempt {
-        component: component(),
+        component_name: component(),
         source: source(),
         target: target(),
     }
@@ -66,11 +66,11 @@ fn attempt() -> Attempt {
 
 fn completion() -> Completion {
     Completion {
-        component: component(),
+        component_name: component(),
         source: source(),
         target: target(),
-        migration: migration().into(),
-        changed_records: 103,
+        migration_identifier: migration().into(),
+        changed_records: 103.into(),
     }
 }
 
@@ -88,17 +88,17 @@ fn record_kind() -> RecordKind {
 
 fn marker() -> HandoverMarker {
     HandoverMarker {
-        component: component(),
-        schema_hash: contract_version(1),
-        state_sequence: 34,
-        mirrored_write_count: 55,
-        record_frontier: Some(103),
-        recorded_at_date: Date {
+        component_name: component(),
+        contract_version: contract_version(1),
+        state_sequence: 34.into(),
+        mirrored_write_count: 55.into(),
+        record_frontier: Some(103).into(),
+        date: Date {
             year: 2026,
             month: 5,
             day: 22,
         },
-        recorded_at_time: Time {
+        time: Time {
             hour: 11,
             minute: 42,
             second: 0,
@@ -108,11 +108,11 @@ fn marker() -> HandoverMarker {
 
 fn mirror_payload() -> MirrorPayload {
     MirrorPayload {
-        component: component(),
+        component_name: component(),
         source_version: contract_version(1),
         target_version: contract_version(2),
-        kind: record_kind(),
-        payload: raw_bytes(vec![1, 2, 3]),
+        record_kind: record_kind(),
+        raw_bytes: raw_bytes(vec![1, 2, 3]),
     }
 }
 
@@ -182,25 +182,25 @@ fn handover_requests_round_trip_through_signal_frames() {
     let inputs = [
         Input::ask_handover_marker(component()),
         Input::ready_to_handover(ReadinessReport {
-            component: component(),
-            source_marker: marker(),
+            component_name: component(),
+            handover_marker: marker(),
         }),
         Input::handover_completed(CompletionReport {
-            component: component(),
-            accepted_marker: marker(),
+            component_name: component(),
+            handover_marker: marker(),
         }),
         Input::mirror(mirror_payload()),
         Input::divergence(DivergencePayload {
-            component: component(),
+            component_name: component(),
             source_version: contract_version(1),
             target_version: contract_version(2),
-            reason: DivergenceReason::NotRepresentable,
-            kind: record_kind(),
-            payload: raw_bytes(vec![9, 8, 7]),
+            divergence_reason: DivergenceReason::NotRepresentable,
+            record_kind: record_kind(),
+            raw_bytes: raw_bytes(vec![9, 8, 7]),
         }),
         Input::recover_from_failure(RecoveryRequest {
-            component: component(),
-            failure_identifier: 7,
+            component_name: component(),
+            failure_identifier: 7.into(),
         }),
     ];
 
@@ -212,36 +212,36 @@ fn handover_requests_round_trip_through_signal_frames() {
 #[test]
 fn replies_round_trip_through_signal_frames() {
     let outputs = [
-        Output::inspection_reported(vec![supported_migration()]),
+        Output::inspection_reported(vec![supported_migration()].into()),
         Output::upgrade_completed(completion()),
         Output::upgrade_rejected(Rejection {
-            component: component(),
+            component_name: component(),
             source: source(),
             target: Version {
                 major: 0,
                 minor: 1,
                 patch: 2,
             },
-            reason: RejectionReason::UnsupportedMigration,
+            rejection_reason: RejectionReason::UnsupportedMigration,
         }),
         Output::reported(Reported {
-            completions: vec![completion()],
-            rejections: vec![],
+            completions: vec![completion()].into(),
+            rejections: vec![].into(),
         }),
         Output::handover_marker(marker()),
         Output::handover_accepted(marker()),
         Output::handover_finalized(marker()),
         Output::mirror_acknowledged(MirrorAcknowledgement {
-            component: component(),
-            mirrored_write_count: 56,
+            component_name: component(),
+            mirrored_write_count: 56.into(),
         }),
         Output::recovery_completed(RecoveryResult {
-            component: component(),
-            recovered: true,
+            component_name: component(),
+            recovered: true.into(),
         }),
         Output::handover_rejected(HandoverRejection {
-            component: component(),
-            reason: HandoverRejectionReason::StateSequenceAdvanced,
+            component_name: component(),
+            handover_rejection_reason: HandoverRejectionReason::StateSequenceAdvanced,
         }),
         Output::request_unimplemented(UnimplementedReason::NotBuiltYet),
     ];
@@ -261,8 +261,8 @@ fn contract_owned_routes_are_generated_for_both_surfaces() {
     assert_eq!(Input::mirror(mirror_payload()).route(), InputRoute::Mirror);
     assert_eq!(
         Input::recover_from_failure(RecoveryRequest {
-            component: component(),
-            failure_identifier: 7,
+            component_name: component(),
+            failure_identifier: 7.into(),
         })
         .route(),
         InputRoute::RecoverFromFailure
@@ -302,7 +302,7 @@ fn canonical_catalogue_nota_examples_round_trip() {
         "(Report (Component persona-spirit))",
     );
     round_trip_nota(
-        Output::inspection_reported(vec![supported_migration()]),
+        Output::inspection_reported(vec![supported_migration()].into()),
         "(InspectionReported [(persona-spirit (0 1 0) (0 1 1) persona-spirit-0-1-0-to-0-1-1)])",
     );
     round_trip_nota(
@@ -311,14 +311,14 @@ fn canonical_catalogue_nota_examples_round_trip() {
     );
     round_trip_nota(
         Output::upgrade_rejected(Rejection {
-            component: component(),
+            component_name: component(),
             source: source(),
             target: Version {
                 major: 0,
                 minor: 1,
                 patch: 2,
             },
-            reason: RejectionReason::UnsupportedMigration,
+            rejection_reason: RejectionReason::UnsupportedMigration,
         }),
         "(UpgradeRejected (persona-spirit (0 1 0) (0 1 2) UnsupportedMigration))",
     );
