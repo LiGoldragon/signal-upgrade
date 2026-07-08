@@ -39,9 +39,8 @@ lives in the `upgrade` runtime.
 
 ## Code Map
 
-- `schema/lib.schema` declares the first real schema source for
-  the ordinary upgrade signal surface and its generated wire-only
-  Input/Output roots.
+- `schema/lib.schema` declares the TrueSchema source for the ordinary
+  upgrade signal surface and its generated wire-only Input/Output roots.
 - `src/schema/lib.rs` is the checked-in generated Rust interface;
   `build.rs` deserializes `schema/lib.schema` into `SchemaSource`,
   validates the schema-in-Rust value through text and rkyv round-trips,
