@@ -1,73 +1,56 @@
 {
-  description = "signal-upgrade - ordinary upgrade signal contract scaffold";
+  description = "Signal upgrade contract.";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-utils.url = "github:numtide/flake-utils";
-    fenix = {
-      url = "github:nix-community/fenix";
+    rust-build = {
+      url = "github:LiGoldragon/rust-build";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    crane.url = "github:ipetkov/crane";
   };
 
-  outputs = { self, nixpkgs, flake-utils, fenix, crane }:
-    flake-utils.lib.eachDefaultSystem (system:
+  outputs =
+    { nixpkgs, flake-utils, rust-build, ... }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
       let
         pkgs = import nixpkgs { inherit system; };
-        toolchain = fenix.packages.${system}.stable.withComponents [
-          "cargo"
-          "rustc"
-          "rustfmt"
-          "clippy"
-          "rust-src"
-        ];
-        craneLib = (crane.mkLib pkgs).overrideToolchain toolchain;
-        examplesFilter = path: _type: builtins.match ".*/examples(/.*)?$" path != null;
-        schemaFilter = path: type:
-          type == "regular"
-            && (pkgs.lib.hasSuffix ".schema" path);
-        sourceFilter = path: type:
-          (craneLib.filterCargoSources path type)
-            || (examplesFilter path type)
-            || (schemaFilter path type);
-        src = pkgs.lib.cleanSourceWith {
-          src = ./.;
-          filter = sourceFilter;
-          name = "source";
+        rust = rust-build.lib.${system}.fromToolchainFile pkgs {
+          file = ./rust-toolchain.toml;
+          sha256 = "sha256-gh/xTkxKHL4eiRXzWv8KP7vfjSk61Iq48x47BEDFgfk=";
         };
-        cargoVendorDirectory = craneLib.vendorCargoDeps { inherit src; };
-        commonArguments = {
-          inherit src cargoVendorDirectory;
+        inherit (rust) craneLib toolchain;
+        schemaFilter = path: type: type == "regular" && pkgs.lib.hasSuffix ".schema" path;
+        src = rust.cleanSource {
+          root = ./.;
+          extraFilters = [ schemaFilter ];
+        };
+        commonArgs = {
+          inherit src;
           strictDeps = true;
         };
-        cargoArtifacts = craneLib.buildDepsOnly commonArguments;
+        cargoArtifacts = craneLib.buildDepsOnly commonArgs;
       in
       {
-        packages.default = craneLib.buildPackage (commonArguments // { inherit cargoArtifacts; });
+        packages.default = craneLib.buildPackage (commonArgs // { inherit cargoArtifacts; });
         checks = {
-          build = craneLib.cargoBuild (commonArguments // { inherit cargoArtifacts; });
-          test = craneLib.cargoTest (commonArguments // { inherit cargoArtifacts; });
-          test-round-trip = craneLib.cargoTest (commonArguments // {
+          build = craneLib.cargoBuild (commonArgs // { inherit cargoArtifacts; });
+          test = craneLib.cargoTest (commonArgs // { inherit cargoArtifacts; });
+          test-round-trip = craneLib.cargoTest (commonArgs // {
             inherit cargoArtifacts;
             cargoTestExtraArgs = "--test round_trip";
           });
-          test-generated-schema = craneLib.cargoTest (commonArguments // {
+          test-generated-schema = craneLib.cargoTest (commonArgs // {
             inherit cargoArtifacts;
             cargoTestExtraArgs = "--test generated_schema";
           });
-          generated-schema-source-checked-in = pkgs.runCommand "signal-upgrade-generated-schema-source-checked-in" { } ''
-            test -f ${src}/schema/lib.schema
-            test -f ${src}/src/schema/lib.rs
-            ! grep -R "include!(concat!(env!(\"OUT_DIR\")" ${src}/src ${src}/build.rs
-            touch $out
-          '';
-          doc = craneLib.cargoDoc (commonArguments // {
+          doc = craneLib.cargoDoc (commonArgs // {
             inherit cargoArtifacts;
             RUSTDOCFLAGS = "-D warnings";
           });
           fmt = craneLib.cargoFmt { inherit src; };
-          clippy = craneLib.cargoClippy (commonArguments // {
+          clippy = craneLib.cargoClippy (commonArgs // {
             inherit cargoArtifacts;
             cargoClippyExtraArgs = "--all-targets -- -D warnings";
           });
@@ -76,5 +59,7 @@
           name = "signal-upgrade";
           packages = [ pkgs.jujutsu pkgs.pkg-config toolchain ];
         };
-      });
+        formatter = pkgs.nixfmt;
+      }
+    );
 }

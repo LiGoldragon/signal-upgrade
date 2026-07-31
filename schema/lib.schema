@@ -8,62 +8,115 @@
  (Mirror MirrorPayload)
  (Divergence DivergencePayload)
  (RecoverFromFailure RecoveryRequest)]
-[(InspectionReported InspectionReported)
+[(InspectionReported InspectionReportedPayload)
  (UpgradeCompleted Completion)
  (UpgradeRejected Rejection)
- (Reported Reported)
- (HandoverMarker HandoverMarker)
+ (Reported ReportedPayload)
+ (HandoverMarker HandoverMarkerPayload)
  (HandoverAccepted HandoverAcceptance)
  (HandoverFinalized HandoverFinalization)
  (MirrorAcknowledged MirrorAcknowledgement)
  (DivergenceAcknowledged DivergenceAcknowledgement)
  (RecoveryCompleted RecoveryResult)
  (HandoverRejected HandoverRejection)
- (RequestUnimplemented RequestUnimplemented)]
+ (RequestUnimplemented RequestUnimplementedPayload)]
 {
-  ComponentName String
-  MigrationIdentifier String
-  RecordKind String
-  RawByte Integer
-  RawBytes (Vector RawByte)
-  ChangedRecords Integer
-  StateSequence Integer
-  MirroredWriteCount Integer
-  RecordFrontier (Optional Integer)
-  FailureIdentifier Integer
-  DivergenceIdentifier Integer
-  Recovered Boolean
-  SupportedMigrations (Vector SupportedMigration)
-  Completions (Vector Completion)
-  Rejections (Vector Rejection)
-  ContractVersion { RawBytes }
-  Version { major.Integer minor.Integer patch.Integer }
-  SupportedMigration { ComponentName source.Version target.Version MigrationIdentifier }
-  Inspection [All (Component ComponentName)]
-  Attempt { ComponentName source.Version target.Version }
-  ReportQuery [All (Component ComponentName)]
-  InspectionReported { SupportedMigrations }
-  Completion { ComponentName source.Version target.Version MigrationIdentifier ChangedRecords }
-  RejectionReason [UnsupportedMigration ComponentMismatch MigrationFailed]
-  Rejection { ComponentName source.Version target.Version RejectionReason }
-  Reported { Completions Rejections }
-  UnimplementedReason [NotBuiltYet IntegrationNotLanded]
-  RequestUnimplemented { UnimplementedReason }
-  Date { year.Integer month.Integer day.Integer }
-  Time { hour.Integer minute.Integer second.Integer }
-  HandoverMarker { ComponentName ContractVersion StateSequence MirroredWriteCount RecordFrontier Date Time }
-  MarkerRequest { ComponentName }
-  ReadinessReport { ComponentName HandoverMarker }
-  CompletionReport { ComponentName HandoverMarker }
-  MirrorPayload { ComponentName source_version.ContractVersion target_version.ContractVersion RecordKind RawBytes }
-  DivergencePayload { ComponentName source_version.ContractVersion target_version.ContractVersion DivergenceReason RecordKind RawBytes }
-  RecoveryRequest { ComponentName FailureIdentifier }
-  HandoverAcceptance { HandoverMarker }
-  HandoverFinalization { HandoverMarker }
-  MirrorAcknowledgement { ComponentName MirroredWriteCount }
-  DivergenceAcknowledgement { ComponentName DivergenceIdentifier }
-  RecoveryResult { ComponentName Recovered }
-  HandoverRejection { ComponentName HandoverRejectionReason }
-  HandoverRejectionReason [SchemaMismatch StateSequenceAdvanced AlreadyInHandover NotReady]
-  DivergenceReason [NotRepresentable TargetUnavailable TargetRejected]
+  Inspect.Inspection
+  AttemptUpgrade.Attempt
+  Report.ReportQuery
+  AskHandoverMarker.MarkerRequest
+  ReadyToHandover.ReadinessReport
+  HandoverCompleted.CompletionReport
+  Mirror.MirrorPayload
+  Divergence.DivergencePayload
+  RecoverFromFailure.RecoveryRequest
+
+  InspectionReported.InspectionReportedPayload
+  UpgradeCompleted.Completion
+  UpgradeRejected.Rejection
+  Reported.ReportedPayload
+  HandoverMarker.HandoverMarkerPayload
+  HandoverAccepted.HandoverAcceptance
+  HandoverFinalized.HandoverFinalization
+  MirrorAcknowledged.MirrorAcknowledgement
+  DivergenceAcknowledged.DivergenceAcknowledgement
+  RecoveryCompleted.RecoveryResult
+  HandoverRejected.HandoverRejection
+  RequestUnimplemented.RequestUnimplementedPayload
+
+  ComponentName.String
+  Component.ComponentName
+  MigrationIdentifier.String
+  RecordKind.String
+  RawByte.Integer
+  RawBytes.Vector.RawByte
+  HandoverMarkerPayload.HandoverMarkerData
+  Source.Version
+  Target.Version
+  Identifier.MigrationIdentifier
+  Migrations.Vector.SupportedMigration
+  Migration.MigrationIdentifier
+  ChangedRecords.Integer
+  RejectionReasonSelection.RejectionReason
+  Completions.Vector.Completion
+  Rejections.Vector.Rejection
+  Year.Integer
+  Month.Integer
+  Day.Integer
+  Major.Integer
+  Minor.Integer
+  Patch.Integer
+  Hour.Integer
+  Minute.Integer
+  Second.Integer
+  SchemaHash.ContractVersion
+  StateSequence.Integer
+  MirroredWriteCount.Integer
+  RecordFrontier.Optional.Integer
+  RecordedAtDate.Date
+  RecordedAtTime.Time
+  SourceMarker.HandoverMarkerData
+  AcceptedMarker.HandoverMarkerData
+  SourceVersion.ContractVersion
+  TargetVersion.ContractVersion
+  Kind.RecordKind
+  Payload.RawBytes
+  DivergenceReasonSelection.DivergenceReason
+  FailureIdentifier.Integer
+  FinalizedMarker.HandoverMarkerData
+  DivergenceIdentifier.Integer
+  Recovered.Boolean
+  HandoverRejectionReasonSelection.HandoverRejectionReason
+  ContractVersion.RawBytes
+  Version.{ Major Minor Patch }
+  SupportedMigration.{ Component Source Target Identifier }
+  Inspection.[All Component.ComponentName]
+  Attempt.{ Component Source Target }
+  ReportQuery.[All Component.ComponentName]
+  InspectionReportedPayload.Migrations
+  Completion.{ Component Source Target Migration ChangedRecords }
+  RejectionReason.[UnsupportedMigration ComponentMismatch MigrationFailed]
+  Rejection.{ Component Source Target RejectionReasonSelection }
+  ReportedPayload.{ Completions Rejections }
+  UnimplementedReason.[NotBuiltYet IntegrationNotLanded]
+  RequestUnimplementedPayload.UnimplementedReason
+  Date.{ Year Month Day }
+  Time.{ Hour Minute Second }
+  HandoverMarkerData.{ Component SchemaHash StateSequence MirroredWriteCount RecordFrontier RecordedAtDate RecordedAtTime }
+  MarkerRequest.Component
+  ReadinessReport.{ Component SourceMarker }
+  CompletionReport.{ Component AcceptedMarker }
+  MirrorPayload.{ Component SourceVersion TargetVersion Kind Payload }
+  DivergencePayload.{ Component SourceVersion TargetVersion DivergenceReasonSelection Kind Payload }
+  RecoveryRequest.{ Component FailureIdentifier }
+  HandoverAcceptance.AcceptedMarker
+  HandoverFinalization.FinalizedMarker
+  MirrorAcknowledgement.{ Component MirroredWriteCount }
+  DivergenceAcknowledgement.{ Component DivergenceIdentifier }
+  RecoveryResult.{ Component Recovered }
+  HandoverRejection.{ Component HandoverRejectionReasonSelection }
+  HandoverRejectionReason.[SchemaMismatch StateSequenceAdvanced AlreadyInHandover NotReady]
+  DivergenceReason.[NotRepresentable TargetUnavailable TargetRejected]
 }
+{}
+{}

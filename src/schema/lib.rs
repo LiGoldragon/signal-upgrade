@@ -10,166 +10,558 @@ pub type Boolean = bool;
 pub type Path = std::string::String;
 
 #[rustfmt::skip]
-#[cfg(feature = "nota-text")]
-pub use nota::{NotaDecodeError, NotaEncode, NotaSource};
+#[cfg(feature = "dotos-text")]
+pub use dotos::{DotosDecodeError, DotosEncode, DotosSource};
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Inspect(Inspection);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct AttemptUpgrade(Attempt);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Report(ReportQuery);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct AskHandoverMarker(MarkerRequest);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct ReadyToHandover(ReadinessReport);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HandoverCompleted(CompletionReport);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Mirror(MirrorPayload);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Divergence(DivergencePayload);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct RecoverFromFailure(RecoveryRequest);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct InspectionReported(InspectionReportedPayload);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct UpgradeCompleted(Completion);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct UpgradeRejected(Rejection);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Reported(ReportedPayload);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HandoverMarker(HandoverMarkerPayload);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HandoverAccepted(HandoverAcceptance);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HandoverFinalized(HandoverFinalization);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct MirrorAcknowledged(MirrorAcknowledgement);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct DivergenceAcknowledged(DivergenceAcknowledgement);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct RecoveryCompleted(RecoveryResult);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HandoverRejected(HandoverRejection);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct RequestUnimplemented(RequestUnimplementedPayload);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ComponentName(String);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Component(ComponentName);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct MigrationIdentifier(String);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct RecordKind(String);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct RawByte(Integer);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct RawBytes(Vec<RawByte>);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HandoverMarkerPayload(HandoverMarkerData);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Source(Version);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Target(Version);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Identifier(MigrationIdentifier);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Migrations(Vec<SupportedMigration>);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Migration(MigrationIdentifier);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ChangedRecords(Integer);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct StateSequence(Integer);
+pub struct RejectionReasonSelection(RejectionReason);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct MirroredWriteCount(Integer);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct RecordFrontier(Option<Integer>);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct FailureIdentifier(Integer);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct DivergenceIdentifier(Integer);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Recovered(Boolean);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
-)]
-#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct SupportedMigrations(Vec<SupportedMigration>);
-
-#[rustfmt::skip]
-#[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Completions(Vec<Completion>);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Rejections(Vec<Rejection>);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Year(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Month(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Day(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Major(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Minor(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Patch(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Hour(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Minute(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Second(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct SchemaHash(ContractVersion);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct StateSequence(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct MirroredWriteCount(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct RecordFrontier(Option<Integer>);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct RecordedAtDate(Date);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct RecordedAtTime(Time);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct SourceMarker(HandoverMarkerData);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct AcceptedMarker(HandoverMarkerData);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct SourceVersion(ContractVersion);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct TargetVersion(ContractVersion);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Kind(RecordKind);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Payload(RawBytes);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct DivergenceReasonSelection(DivergenceReason);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct FailureIdentifier(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct FinalizedMarker(HandoverMarkerData);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct DivergenceIdentifier(Integer);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct Recovered(Boolean);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
+)]
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct HandoverRejectionReasonSelection(HandoverRejectionReason);
+
+#[rustfmt::skip]
+#[cfg_attr(
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ContractVersion(RawBytes);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Version {
-    pub major: Integer,
-    pub minor: Integer,
-    pub patch: Integer,
+    pub major: Major,
+    pub minor: Minor,
+    pub patch: Patch,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct SupportedMigration {
-    pub component_name: ComponentName,
-    pub source: Version,
-    pub target: Version,
-    pub migration_identifier: MigrationIdentifier,
+    pub component: Component,
+    pub source: Source,
+    pub target: Target,
+    pub identifier: Identifier,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Inspection {
@@ -179,20 +571,20 @@ pub enum Inspection {
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Attempt {
-    pub component_name: ComponentName,
-    pub source: Version,
-    pub target: Version,
+    pub component: Component,
+    pub source: Source,
+    pub target: Target,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum ReportQuery {
@@ -202,30 +594,30 @@ pub enum ReportQuery {
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct InspectionReported(SupportedMigrations);
+pub struct InspectionReportedPayload(Migrations);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Completion {
-    pub component_name: ComponentName,
-    pub source: Version,
-    pub target: Version,
-    pub migration_identifier: MigrationIdentifier,
+    pub component: Component,
+    pub source: Source,
+    pub target: Target,
+    pub migration: Migration,
     pub changed_records: ChangedRecords,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(
     rkyv::Archive,
@@ -245,32 +637,32 @@ pub enum RejectionReason {
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Rejection {
-    pub component_name: ComponentName,
-    pub source: Version,
-    pub target: Version,
-    pub rejection_reason: RejectionReason,
+    pub component: Component,
+    pub source: Source,
+    pub target: Target,
+    pub rejection_reason_selection: RejectionReasonSelection,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct Reported {
+pub struct ReportedPayload {
     pub completions: Completions,
     pub rejections: Rejections,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(
     rkyv::Archive,
@@ -289,186 +681,186 @@ pub enum UnimplementedReason {
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct RequestUnimplemented(UnimplementedReason);
+pub struct RequestUnimplementedPayload(UnimplementedReason);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Date {
-    pub year: Integer,
-    pub month: Integer,
-    pub day: Integer,
+    pub year: Year,
+    pub month: Month,
+    pub day: Day,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct Time {
-    pub hour: Integer,
-    pub minute: Integer,
-    pub second: Integer,
+    pub hour: Hour,
+    pub minute: Minute,
+    pub second: Second,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct HandoverMarker {
-    pub component_name: ComponentName,
-    pub contract_version: ContractVersion,
+pub struct HandoverMarkerData {
+    pub component: Component,
+    pub schema_hash: SchemaHash,
     pub state_sequence: StateSequence,
     pub mirrored_write_count: MirroredWriteCount,
     pub record_frontier: RecordFrontier,
-    pub date: Date,
-    pub time: Time,
+    pub recorded_at_date: RecordedAtDate,
+    pub recorded_at_time: RecordedAtTime,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct MarkerRequest(ComponentName);
+pub struct MarkerRequest(Component);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct ReadinessReport {
-    pub component_name: ComponentName,
-    pub handover_marker: HandoverMarker,
+    pub component: Component,
+    pub source_marker: SourceMarker,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct CompletionReport {
-    pub component_name: ComponentName,
-    pub handover_marker: HandoverMarker,
+    pub component: Component,
+    pub accepted_marker: AcceptedMarker,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct MirrorPayload {
-    pub component_name: ComponentName,
-    pub source_version: ContractVersion,
-    pub target_version: ContractVersion,
-    pub record_kind: RecordKind,
-    pub raw_bytes: RawBytes,
+    pub component: Component,
+    pub source_version: SourceVersion,
+    pub target_version: TargetVersion,
+    pub kind: Kind,
+    pub payload: Payload,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct DivergencePayload {
-    pub component_name: ComponentName,
-    pub source_version: ContractVersion,
-    pub target_version: ContractVersion,
-    pub divergence_reason: DivergenceReason,
-    pub record_kind: RecordKind,
-    pub raw_bytes: RawBytes,
+    pub component: Component,
+    pub source_version: SourceVersion,
+    pub target_version: TargetVersion,
+    pub divergence_reason_selection: DivergenceReasonSelection,
+    pub kind: Kind,
+    pub payload: Payload,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct RecoveryRequest {
-    pub component_name: ComponentName,
+    pub component: Component,
     pub failure_identifier: FailureIdentifier,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct HandoverAcceptance(HandoverMarker);
+pub struct HandoverAcceptance(AcceptedMarker);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
-pub struct HandoverFinalization(HandoverMarker);
+pub struct HandoverFinalization(FinalizedMarker);
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct MirrorAcknowledgement {
-    pub component_name: ComponentName,
+    pub component: Component,
     pub mirrored_write_count: MirroredWriteCount,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct DivergenceAcknowledgement {
-    pub component_name: ComponentName,
+    pub component: Component,
     pub divergence_identifier: DivergenceIdentifier,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct RecoveryResult {
-    pub component_name: ComponentName,
+    pub component: Component,
     pub recovered: Recovered,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub struct HandoverRejection {
-    pub component_name: ComponentName,
-    pub handover_rejection_reason: HandoverRejectionReason,
+    pub component: Component,
+    pub handover_rejection_reason_selection: HandoverRejectionReasonSelection,
 }
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(
     rkyv::Archive,
@@ -489,8 +881,8 @@ pub enum HandoverRejectionReason {
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(
     rkyv::Archive,
@@ -510,8 +902,8 @@ pub enum DivergenceReason {
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Input {
@@ -528,23 +920,422 @@ pub enum Input {
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
 pub enum Output {
-    InspectionReported(InspectionReported),
+    InspectionReported(InspectionReportedPayload),
     UpgradeCompleted(Completion),
     UpgradeRejected(Rejection),
-    Reported(Reported),
-    HandoverMarker(HandoverMarker),
+    Reported(ReportedPayload),
+    HandoverMarker(HandoverMarkerPayload),
     HandoverAccepted(HandoverAcceptance),
     HandoverFinalized(HandoverFinalization),
     MirrorAcknowledged(MirrorAcknowledgement),
     DivergenceAcknowledged(DivergenceAcknowledgement),
     RecoveryCompleted(RecoveryResult),
     HandoverRejected(HandoverRejection),
-    RequestUnimplemented(RequestUnimplemented),
+    RequestUnimplemented(RequestUnimplementedPayload),
+}
+
+#[rustfmt::skip]
+impl Inspect {
+    pub fn new(payload: Inspection) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Inspection {
+        &self.0
+    }
+    pub fn into_payload(self) -> Inspection {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Inspection> for Inspect {
+    fn from(payload: Inspection) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl AttemptUpgrade {
+    pub fn new(payload: Attempt) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Attempt {
+        &self.0
+    }
+    pub fn into_payload(self) -> Attempt {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Attempt> for AttemptUpgrade {
+    fn from(payload: Attempt) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Report {
+    pub fn new(payload: ReportQuery) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &ReportQuery {
+        &self.0
+    }
+    pub fn into_payload(self) -> ReportQuery {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<ReportQuery> for Report {
+    fn from(payload: ReportQuery) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl AskHandoverMarker {
+    pub fn new(payload: MarkerRequest) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &MarkerRequest {
+        &self.0
+    }
+    pub fn into_payload(self) -> MarkerRequest {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<MarkerRequest> for AskHandoverMarker {
+    fn from(payload: MarkerRequest) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl ReadyToHandover {
+    pub fn new(payload: ReadinessReport) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &ReadinessReport {
+        &self.0
+    }
+    pub fn into_payload(self) -> ReadinessReport {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<ReadinessReport> for ReadyToHandover {
+    fn from(payload: ReadinessReport) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl HandoverCompleted {
+    pub fn new(payload: CompletionReport) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &CompletionReport {
+        &self.0
+    }
+    pub fn into_payload(self) -> CompletionReport {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<CompletionReport> for HandoverCompleted {
+    fn from(payload: CompletionReport) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Mirror {
+    pub fn new(payload: MirrorPayload) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &MirrorPayload {
+        &self.0
+    }
+    pub fn into_payload(self) -> MirrorPayload {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<MirrorPayload> for Mirror {
+    fn from(payload: MirrorPayload) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Divergence {
+    pub fn new(payload: DivergencePayload) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &DivergencePayload {
+        &self.0
+    }
+    pub fn into_payload(self) -> DivergencePayload {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<DivergencePayload> for Divergence {
+    fn from(payload: DivergencePayload) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl RecoverFromFailure {
+    pub fn new(payload: RecoveryRequest) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &RecoveryRequest {
+        &self.0
+    }
+    pub fn into_payload(self) -> RecoveryRequest {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<RecoveryRequest> for RecoverFromFailure {
+    fn from(payload: RecoveryRequest) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl InspectionReported {
+    pub fn new(payload: InspectionReportedPayload) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &InspectionReportedPayload {
+        &self.0
+    }
+    pub fn into_payload(self) -> InspectionReportedPayload {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<InspectionReportedPayload> for InspectionReported {
+    fn from(payload: InspectionReportedPayload) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl UpgradeCompleted {
+    pub fn new(payload: Completion) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Completion {
+        &self.0
+    }
+    pub fn into_payload(self) -> Completion {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Completion> for UpgradeCompleted {
+    fn from(payload: Completion) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl UpgradeRejected {
+    pub fn new(payload: Rejection) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Rejection {
+        &self.0
+    }
+    pub fn into_payload(self) -> Rejection {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Rejection> for UpgradeRejected {
+    fn from(payload: Rejection) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Reported {
+    pub fn new(payload: ReportedPayload) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &ReportedPayload {
+        &self.0
+    }
+    pub fn into_payload(self) -> ReportedPayload {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<ReportedPayload> for Reported {
+    fn from(payload: ReportedPayload) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl HandoverMarker {
+    pub fn new(payload: HandoverMarkerPayload) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HandoverMarkerPayload {
+        &self.0
+    }
+    pub fn into_payload(self) -> HandoverMarkerPayload {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HandoverMarkerPayload> for HandoverMarker {
+    fn from(payload: HandoverMarkerPayload) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl HandoverAccepted {
+    pub fn new(payload: HandoverAcceptance) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HandoverAcceptance {
+        &self.0
+    }
+    pub fn into_payload(self) -> HandoverAcceptance {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HandoverAcceptance> for HandoverAccepted {
+    fn from(payload: HandoverAcceptance) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl HandoverFinalized {
+    pub fn new(payload: HandoverFinalization) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HandoverFinalization {
+        &self.0
+    }
+    pub fn into_payload(self) -> HandoverFinalization {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HandoverFinalization> for HandoverFinalized {
+    fn from(payload: HandoverFinalization) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl MirrorAcknowledged {
+    pub fn new(payload: MirrorAcknowledgement) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &MirrorAcknowledgement {
+        &self.0
+    }
+    pub fn into_payload(self) -> MirrorAcknowledgement {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<MirrorAcknowledgement> for MirrorAcknowledged {
+    fn from(payload: MirrorAcknowledgement) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl DivergenceAcknowledged {
+    pub fn new(payload: DivergenceAcknowledgement) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &DivergenceAcknowledgement {
+        &self.0
+    }
+    pub fn into_payload(self) -> DivergenceAcknowledgement {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<DivergenceAcknowledgement> for DivergenceAcknowledged {
+    fn from(payload: DivergenceAcknowledgement) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl RecoveryCompleted {
+    pub fn new(payload: RecoveryResult) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &RecoveryResult {
+        &self.0
+    }
+    pub fn into_payload(self) -> RecoveryResult {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<RecoveryResult> for RecoveryCompleted {
+    fn from(payload: RecoveryResult) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl HandoverRejected {
+    pub fn new(payload: HandoverRejection) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HandoverRejection {
+        &self.0
+    }
+    pub fn into_payload(self) -> HandoverRejection {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HandoverRejection> for HandoverRejected {
+    fn from(payload: HandoverRejection) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl RequestUnimplemented {
+    pub fn new(payload: RequestUnimplementedPayload) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &RequestUnimplementedPayload {
+        &self.0
+    }
+    pub fn into_payload(self) -> RequestUnimplementedPayload {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<RequestUnimplementedPayload> for RequestUnimplemented {
+    fn from(payload: RequestUnimplementedPayload) -> Self {
+        Self::new(payload)
+    }
 }
 
 #[rustfmt::skip]
@@ -562,6 +1353,25 @@ impl ComponentName {
 #[rustfmt::skip]
 impl From<String> for ComponentName {
     fn from(payload: String) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Component {
+    pub fn new(payload: ComponentName) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &ComponentName {
+        &self.0
+    }
+    pub fn into_payload(self) -> ComponentName {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<ComponentName> for Component {
+    fn from(payload: ComponentName) -> Self {
         Self::new(payload)
     }
 }
@@ -643,6 +1453,120 @@ impl From<Vec<RawByte>> for RawBytes {
 }
 
 #[rustfmt::skip]
+impl HandoverMarkerPayload {
+    pub fn new(payload: HandoverMarkerData) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HandoverMarkerData {
+        &self.0
+    }
+    pub fn into_payload(self) -> HandoverMarkerData {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HandoverMarkerData> for HandoverMarkerPayload {
+    fn from(payload: HandoverMarkerData) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Source {
+    pub fn new(payload: Version) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Version {
+        &self.0
+    }
+    pub fn into_payload(self) -> Version {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Version> for Source {
+    fn from(payload: Version) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Target {
+    pub fn new(payload: Version) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Version {
+        &self.0
+    }
+    pub fn into_payload(self) -> Version {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Version> for Target {
+    fn from(payload: Version) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Identifier {
+    pub fn new(payload: MigrationIdentifier) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &MigrationIdentifier {
+        &self.0
+    }
+    pub fn into_payload(self) -> MigrationIdentifier {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<MigrationIdentifier> for Identifier {
+    fn from(payload: MigrationIdentifier) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Migrations {
+    pub fn new(payload: Vec<SupportedMigration>) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Vec<SupportedMigration> {
+        &self.0
+    }
+    pub fn into_payload(self) -> Vec<SupportedMigration> {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Vec<SupportedMigration>> for Migrations {
+    fn from(payload: Vec<SupportedMigration>) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Migration {
+    pub fn new(payload: MigrationIdentifier) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &MigrationIdentifier {
+        &self.0
+    }
+    pub fn into_payload(self) -> MigrationIdentifier {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<MigrationIdentifier> for Migration {
+    fn from(payload: MigrationIdentifier) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
 impl ChangedRecords {
     pub fn new(payload: Integer) -> Self {
         Self(payload)
@@ -657,6 +1581,253 @@ impl ChangedRecords {
 #[rustfmt::skip]
 impl From<Integer> for ChangedRecords {
     fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl RejectionReasonSelection {
+    pub fn new(payload: RejectionReason) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &RejectionReason {
+        &self.0
+    }
+    pub fn into_payload(self) -> RejectionReason {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<RejectionReason> for RejectionReasonSelection {
+    fn from(payload: RejectionReason) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Completions {
+    pub fn new(payload: Vec<Completion>) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Vec<Completion> {
+        &self.0
+    }
+    pub fn into_payload(self) -> Vec<Completion> {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Vec<Completion>> for Completions {
+    fn from(payload: Vec<Completion>) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Rejections {
+    pub fn new(payload: Vec<Rejection>) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Vec<Rejection> {
+        &self.0
+    }
+    pub fn into_payload(self) -> Vec<Rejection> {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Vec<Rejection>> for Rejections {
+    fn from(payload: Vec<Rejection>) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Year {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for Year {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Month {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for Month {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Day {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for Day {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Major {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for Major {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Minor {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for Minor {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Patch {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for Patch {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Hour {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for Hour {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Minute {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for Minute {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Second {
+    pub fn new(payload: Integer) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Integer {
+        &self.0
+    }
+    pub fn into_payload(self) -> Integer {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Integer> for Second {
+    fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl SchemaHash {
+    pub fn new(payload: ContractVersion) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &ContractVersion {
+        &self.0
+    }
+    pub fn into_payload(self) -> ContractVersion {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<ContractVersion> for SchemaHash {
+    fn from(payload: ContractVersion) -> Self {
         Self::new(payload)
     }
 }
@@ -719,6 +1890,177 @@ impl From<Option<Integer>> for RecordFrontier {
 }
 
 #[rustfmt::skip]
+impl RecordedAtDate {
+    pub fn new(payload: Date) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Date {
+        &self.0
+    }
+    pub fn into_payload(self) -> Date {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Date> for RecordedAtDate {
+    fn from(payload: Date) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl RecordedAtTime {
+    pub fn new(payload: Time) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &Time {
+        &self.0
+    }
+    pub fn into_payload(self) -> Time {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<Time> for RecordedAtTime {
+    fn from(payload: Time) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl SourceMarker {
+    pub fn new(payload: HandoverMarkerData) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HandoverMarkerData {
+        &self.0
+    }
+    pub fn into_payload(self) -> HandoverMarkerData {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HandoverMarkerData> for SourceMarker {
+    fn from(payload: HandoverMarkerData) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl AcceptedMarker {
+    pub fn new(payload: HandoverMarkerData) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HandoverMarkerData {
+        &self.0
+    }
+    pub fn into_payload(self) -> HandoverMarkerData {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HandoverMarkerData> for AcceptedMarker {
+    fn from(payload: HandoverMarkerData) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl SourceVersion {
+    pub fn new(payload: ContractVersion) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &ContractVersion {
+        &self.0
+    }
+    pub fn into_payload(self) -> ContractVersion {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<ContractVersion> for SourceVersion {
+    fn from(payload: ContractVersion) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl TargetVersion {
+    pub fn new(payload: ContractVersion) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &ContractVersion {
+        &self.0
+    }
+    pub fn into_payload(self) -> ContractVersion {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<ContractVersion> for TargetVersion {
+    fn from(payload: ContractVersion) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Kind {
+    pub fn new(payload: RecordKind) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &RecordKind {
+        &self.0
+    }
+    pub fn into_payload(self) -> RecordKind {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<RecordKind> for Kind {
+    fn from(payload: RecordKind) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl Payload {
+    pub fn new(payload: RawBytes) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &RawBytes {
+        &self.0
+    }
+    pub fn into_payload(self) -> RawBytes {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<RawBytes> for Payload {
+    fn from(payload: RawBytes) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl DivergenceReasonSelection {
+    pub fn new(payload: DivergenceReason) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &DivergenceReason {
+        &self.0
+    }
+    pub fn into_payload(self) -> DivergenceReason {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<DivergenceReason> for DivergenceReasonSelection {
+    fn from(payload: DivergenceReason) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
 impl FailureIdentifier {
     pub fn new(payload: Integer) -> Self {
         Self(payload)
@@ -733,6 +2075,25 @@ impl FailureIdentifier {
 #[rustfmt::skip]
 impl From<Integer> for FailureIdentifier {
     fn from(payload: Integer) -> Self {
+        Self::new(payload)
+    }
+}
+
+#[rustfmt::skip]
+impl FinalizedMarker {
+    pub fn new(payload: HandoverMarkerData) -> Self {
+        Self(payload)
+    }
+    pub fn payload(&self) -> &HandoverMarkerData {
+        &self.0
+    }
+    pub fn into_payload(self) -> HandoverMarkerData {
+        self.0
+    }
+}
+#[rustfmt::skip]
+impl From<HandoverMarkerData> for FinalizedMarker {
+    fn from(payload: HandoverMarkerData) -> Self {
         Self::new(payload)
     }
 }
@@ -776,58 +2137,20 @@ impl From<Boolean> for Recovered {
 }
 
 #[rustfmt::skip]
-impl SupportedMigrations {
-    pub fn new(payload: Vec<SupportedMigration>) -> Self {
+impl HandoverRejectionReasonSelection {
+    pub fn new(payload: HandoverRejectionReason) -> Self {
         Self(payload)
     }
-    pub fn payload(&self) -> &Vec<SupportedMigration> {
+    pub fn payload(&self) -> &HandoverRejectionReason {
         &self.0
     }
-    pub fn into_payload(self) -> Vec<SupportedMigration> {
+    pub fn into_payload(self) -> HandoverRejectionReason {
         self.0
     }
 }
 #[rustfmt::skip]
-impl From<Vec<SupportedMigration>> for SupportedMigrations {
-    fn from(payload: Vec<SupportedMigration>) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl Completions {
-    pub fn new(payload: Vec<Completion>) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &Vec<Completion> {
-        &self.0
-    }
-    pub fn into_payload(self) -> Vec<Completion> {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<Vec<Completion>> for Completions {
-    fn from(payload: Vec<Completion>) -> Self {
-        Self::new(payload)
-    }
-}
-
-#[rustfmt::skip]
-impl Rejections {
-    pub fn new(payload: Vec<Rejection>) -> Self {
-        Self(payload)
-    }
-    pub fn payload(&self) -> &Vec<Rejection> {
-        &self.0
-    }
-    pub fn into_payload(self) -> Vec<Rejection> {
-        self.0
-    }
-}
-#[rustfmt::skip]
-impl From<Vec<Rejection>> for Rejections {
-    fn from(payload: Vec<Rejection>) -> Self {
+impl From<HandoverRejectionReason> for HandoverRejectionReasonSelection {
+    fn from(payload: HandoverRejectionReason) -> Self {
         Self::new(payload)
     }
 }
@@ -852,26 +2175,26 @@ impl From<RawBytes> for ContractVersion {
 }
 
 #[rustfmt::skip]
-impl InspectionReported {
-    pub fn new(payload: SupportedMigrations) -> Self {
+impl InspectionReportedPayload {
+    pub fn new(payload: Migrations) -> Self {
         Self(payload)
     }
-    pub fn payload(&self) -> &SupportedMigrations {
+    pub fn payload(&self) -> &Migrations {
         &self.0
     }
-    pub fn into_payload(self) -> SupportedMigrations {
+    pub fn into_payload(self) -> Migrations {
         self.0
     }
 }
 #[rustfmt::skip]
-impl From<SupportedMigrations> for InspectionReported {
-    fn from(payload: SupportedMigrations) -> Self {
+impl From<Migrations> for InspectionReportedPayload {
+    fn from(payload: Migrations) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
-impl RequestUnimplemented {
+impl RequestUnimplementedPayload {
     pub fn new(payload: UnimplementedReason) -> Self {
         Self(payload)
     }
@@ -883,7 +2206,7 @@ impl RequestUnimplemented {
     }
 }
 #[rustfmt::skip]
-impl From<UnimplementedReason> for RequestUnimplemented {
+impl From<UnimplementedReason> for RequestUnimplementedPayload {
     fn from(payload: UnimplementedReason) -> Self {
         Self::new(payload)
     }
@@ -891,57 +2214,57 @@ impl From<UnimplementedReason> for RequestUnimplemented {
 
 #[rustfmt::skip]
 impl MarkerRequest {
-    pub fn new(payload: ComponentName) -> Self {
+    pub fn new(payload: Component) -> Self {
         Self(payload)
     }
-    pub fn payload(&self) -> &ComponentName {
+    pub fn payload(&self) -> &Component {
         &self.0
     }
-    pub fn into_payload(self) -> ComponentName {
+    pub fn into_payload(self) -> Component {
         self.0
     }
 }
 #[rustfmt::skip]
-impl From<ComponentName> for MarkerRequest {
-    fn from(payload: ComponentName) -> Self {
+impl From<Component> for MarkerRequest {
+    fn from(payload: Component) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
 impl HandoverAcceptance {
-    pub fn new(payload: HandoverMarker) -> Self {
+    pub fn new(payload: AcceptedMarker) -> Self {
         Self(payload)
     }
-    pub fn payload(&self) -> &HandoverMarker {
+    pub fn payload(&self) -> &AcceptedMarker {
         &self.0
     }
-    pub fn into_payload(self) -> HandoverMarker {
+    pub fn into_payload(self) -> AcceptedMarker {
         self.0
     }
 }
 #[rustfmt::skip]
-impl From<HandoverMarker> for HandoverAcceptance {
-    fn from(payload: HandoverMarker) -> Self {
+impl From<AcceptedMarker> for HandoverAcceptance {
+    fn from(payload: AcceptedMarker) -> Self {
         Self::new(payload)
     }
 }
 
 #[rustfmt::skip]
 impl HandoverFinalization {
-    pub fn new(payload: HandoverMarker) -> Self {
+    pub fn new(payload: FinalizedMarker) -> Self {
         Self(payload)
     }
-    pub fn payload(&self) -> &HandoverMarker {
+    pub fn payload(&self) -> &FinalizedMarker {
         &self.0
     }
-    pub fn into_payload(self) -> HandoverMarker {
+    pub fn into_payload(self) -> FinalizedMarker {
         self.0
     }
 }
 #[rustfmt::skip]
-impl From<HandoverMarker> for HandoverFinalization {
-    fn from(payload: HandoverMarker) -> Self {
+impl From<FinalizedMarker> for HandoverFinalization {
+    fn from(payload: FinalizedMarker) -> Self {
         Self::new(payload)
     }
 }
@@ -971,7 +2294,7 @@ impl Input {
     pub fn report(payload: ReportQuery) -> Self {
         Self::Report(payload)
     }
-    pub fn ask_handover_marker(payload: ComponentName) -> Self {
+    pub fn ask_handover_marker(payload: Component) -> Self {
         Self::AskHandoverMarker(MarkerRequest::new(payload))
     }
     pub fn ready_to_handover(payload: ReadinessReport) -> Self {
@@ -993,8 +2316,8 @@ impl Input {
 
 #[rustfmt::skip]
 impl Output {
-    pub fn inspection_reported(payload: SupportedMigrations) -> Self {
-        Self::InspectionReported(InspectionReported::new(payload))
+    pub fn inspection_reported(payload: Migrations) -> Self {
+        Self::InspectionReported(InspectionReportedPayload::new(payload))
     }
     pub fn upgrade_completed(payload: Completion) -> Self {
         Self::UpgradeCompleted(payload)
@@ -1002,16 +2325,16 @@ impl Output {
     pub fn upgrade_rejected(payload: Rejection) -> Self {
         Self::UpgradeRejected(payload)
     }
-    pub fn reported(payload: Reported) -> Self {
+    pub fn reported(payload: ReportedPayload) -> Self {
         Self::Reported(payload)
     }
-    pub fn handover_marker(payload: HandoverMarker) -> Self {
-        Self::HandoverMarker(payload)
+    pub fn handover_marker(payload: HandoverMarkerData) -> Self {
+        Self::HandoverMarker(HandoverMarkerPayload::new(payload))
     }
-    pub fn handover_accepted(payload: HandoverMarker) -> Self {
+    pub fn handover_accepted(payload: AcceptedMarker) -> Self {
         Self::HandoverAccepted(HandoverAcceptance::new(payload))
     }
-    pub fn handover_finalized(payload: HandoverMarker) -> Self {
+    pub fn handover_finalized(payload: FinalizedMarker) -> Self {
         Self::HandoverFinalized(HandoverFinalization::new(payload))
     }
     pub fn mirror_acknowledged(payload: MirrorAcknowledgement) -> Self {
@@ -1027,7 +2350,7 @@ impl Output {
         Self::HandoverRejected(payload)
     }
     pub fn request_unimplemented(payload: UnimplementedReason) -> Self {
-        Self::RequestUnimplemented(RequestUnimplemented::new(payload))
+        Self::RequestUnimplemented(RequestUnimplementedPayload::new(payload))
     }
 }
 
@@ -1109,8 +2432,8 @@ impl From<RecoveryRequest> for Input {
 }
 
 #[rustfmt::skip]
-impl From<InspectionReported> for Output {
-    fn from(payload: InspectionReported) -> Self {
+impl From<InspectionReportedPayload> for Output {
+    fn from(payload: InspectionReportedPayload) -> Self {
         Self::InspectionReported(payload)
     }
 }
@@ -1130,15 +2453,15 @@ impl From<Rejection> for Output {
 }
 
 #[rustfmt::skip]
-impl From<Reported> for Output {
-    fn from(payload: Reported) -> Self {
+impl From<ReportedPayload> for Output {
+    fn from(payload: ReportedPayload) -> Self {
         Self::Reported(payload)
     }
 }
 
 #[rustfmt::skip]
-impl From<HandoverMarker> for Output {
-    fn from(payload: HandoverMarker) -> Self {
+impl From<HandoverMarkerPayload> for Output {
+    fn from(payload: HandoverMarkerPayload) -> Self {
         Self::HandoverMarker(payload)
     }
 }
@@ -1186,108 +2509,397 @@ impl From<HandoverRejection> for Output {
 }
 
 #[rustfmt::skip]
-impl From<RequestUnimplemented> for Output {
-    fn from(payload: RequestUnimplemented) -> Self {
+impl From<RequestUnimplementedPayload> for Output {
+    fn from(payload: RequestUnimplementedPayload) -> Self {
         Self::RequestUnimplemented(payload)
     }
 }
 
 #[rustfmt::skip]
-#[cfg(feature = "nota-text")]
+#[cfg(feature = "dotos-text")]
 impl std::str::FromStr for Input {
-    type Err = NotaDecodeError;
+    type Err = DotosDecodeError;
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        NotaSource::new(source).parse::<Self>()
+        DotosSource::new(source).parse::<Self>()
     }
 }
 #[rustfmt::skip]
-#[cfg(feature = "nota-text")]
+#[cfg(feature = "dotos-text")]
 impl std::fmt::Display for Input {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter.write_str(&<Self as NotaEncode>::to_nota(self))
+        formatter.write_str(&<Self as DotosEncode>::to_dotos(self))
     }
 }
 
 #[rustfmt::skip]
-#[cfg(feature = "nota-text")]
+#[cfg(feature = "dotos-text")]
 impl std::str::FromStr for Output {
-    type Err = NotaDecodeError;
+    type Err = DotosDecodeError;
     fn from_str(source: &str) -> Result<Self, Self::Err> {
-        NotaSource::new(source).parse::<Self>()
+        DotosSource::new(source).parse::<Self>()
     }
 }
 #[rustfmt::skip]
-#[cfg(feature = "nota-text")]
+#[cfg(feature = "dotos-text")]
 impl std::fmt::Display for Output {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        formatter.write_str(&<Self as NotaEncode>::to_nota(self))
+        formatter.write_str(&<Self as DotosEncode>::to_dotos(self))
     }
 }
 
 #[rustfmt::skip]
 pub mod short_header {
-    pub const INPUT_INSPECT: u64 = 0x0000000000000000;
-    pub const INPUT_ATTEMPT_UPGRADE: u64 = 0x0001000000000000;
-    pub const INPUT_REPORT: u64 = 0x0002000000000000;
-    pub const INPUT_ASK_HANDOVER_MARKER: u64 = 0x0003000000000000;
-    pub const INPUT_READY_TO_HANDOVER: u64 = 0x0004000000000000;
-    pub const INPUT_HANDOVER_COMPLETED: u64 = 0x0005000000000000;
-    pub const INPUT_MIRROR: u64 = 0x0006000000000000;
-    pub const INPUT_DIVERGENCE: u64 = 0x0007000000000000;
-    pub const INPUT_RECOVER_FROM_FAILURE: u64 = 0x0008000000000000;
-    pub const OUTPUT_INSPECTION_REPORTED: u64 = 0x0100000000000000;
-    pub const OUTPUT_UPGRADE_COMPLETED: u64 = 0x0101000000000000;
-    pub const OUTPUT_UPGRADE_REJECTED: u64 = 0x0102000000000000;
-    pub const OUTPUT_REPORTED: u64 = 0x0103000000000000;
-    pub const OUTPUT_HANDOVER_MARKER: u64 = 0x0104000000000000;
-    pub const OUTPUT_HANDOVER_ACCEPTED: u64 = 0x0105000000000000;
-    pub const OUTPUT_HANDOVER_FINALIZED: u64 = 0x0106000000000000;
-    pub const OUTPUT_MIRROR_ACKNOWLEDGED: u64 = 0x0107000000000000;
-    pub const OUTPUT_DIVERGENCE_ACKNOWLEDGED: u64 = 0x0108000000000000;
-    pub const OUTPUT_RECOVERY_COMPLETED: u64 = 0x0109000000000000;
-    pub const OUTPUT_HANDOVER_REJECTED: u64 = 0x010A000000000000;
-    pub const OUTPUT_REQUEST_UNIMPLEMENTED: u64 = 0x010B000000000000;
+    pub const INPUT_INSPECT: u64 = 0x0000000100000001;
+    pub const INPUT_ATTEMPT_UPGRADE: u64 = 0x0001000100000001;
+    pub const INPUT_REPORT: u64 = 0x0002000100000001;
+    pub const INPUT_ASK_HANDOVER_MARKER: u64 = 0x0003000100000001;
+    pub const INPUT_READY_TO_HANDOVER: u64 = 0x0004000100000001;
+    pub const INPUT_HANDOVER_COMPLETED: u64 = 0x0005000100000001;
+    pub const INPUT_MIRROR: u64 = 0x0006000100000001;
+    pub const INPUT_DIVERGENCE: u64 = 0x0007000100000001;
+    pub const INPUT_RECOVER_FROM_FAILURE: u64 = 0x0008000100000001;
+    pub const OUTPUT_INSPECTION_REPORTED: u64 = 0x0100000100000001;
+    pub const OUTPUT_UPGRADE_COMPLETED: u64 = 0x0101000100000001;
+    pub const OUTPUT_UPGRADE_REJECTED: u64 = 0x0102000100000001;
+    pub const OUTPUT_REPORTED: u64 = 0x0103000100000001;
+    pub const OUTPUT_HANDOVER_MARKER: u64 = 0x0104000100000001;
+    pub const OUTPUT_HANDOVER_ACCEPTED: u64 = 0x0105000100000001;
+    pub const OUTPUT_HANDOVER_FINALIZED: u64 = 0x0106000100000001;
+    pub const OUTPUT_MIRROR_ACKNOWLEDGED: u64 = 0x0107000100000001;
+    pub const OUTPUT_DIVERGENCE_ACKNOWLEDGED: u64 = 0x0108000100000001;
+    pub const OUTPUT_RECOVERY_COMPLETED: u64 = 0x0109000100000001;
+    pub const OUTPUT_HANDOVER_REJECTED: u64 = 0x010A000100000001;
+    pub const OUTPUT_REQUEST_UNIMPLEMENTED: u64 = 0x010B000100000001;
+    pub const HANDSHAKE_REQUEST: u64 = 0xFF00000100000001;
+    pub const HANDSHAKE_REPLY: u64 = 0xFF01000100000001;
+    pub const ENGINE_REFUSAL: u64 = 0xFF02000100000001;
 }
 
 #[rustfmt::skip]
-const SIGNAL_SHORT_HEADER_BYTE_COUNT: usize = 8;
+pub enum ContractMarker {}
+#[rustfmt::skip]
+impl signal_frame::WireContract for ContractMarker {
+    const BINDING: signal_frame::ContractBinding = signal_frame::ContractBinding::new(
+        match signal_frame::ContractId::try_new(1u32) {
+            Ok(contract) => contract,
+            Err(_) => panic!("generated contract ID must be nonzero"),
+        },
+        match signal_frame::WireRevision::try_new(1u16) {
+            Ok(revision) => revision,
+            Err(_) => panic!("generated wire revision must be nonzero"),
+        },
+    );
+}
+#[rustfmt::skip]
+/// Why the daemon refused to produce an ordinary reply.
+#[derive(
+    rkyv::Archive,
+    rkyv::Serialize,
+    rkyv::Deserialize,
+    Clone,
+    Copy,
+    Debug,
+    PartialEq,
+    Eq
+)]
+pub enum EngineRefusalReason {
+    /// The engine ran and rejected the request with its typed
+    /// domain error; the rendered error text is the detail.
+    Rejected,
+    /// The engine layer could not serve the request at all.
+    Unavailable,
+}
+#[rustfmt::skip]
+impl std::fmt::Display for EngineRefusalReason {
+    fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Rejected => formatter.write_str("engine rejected the request"),
+            Self::Unavailable => formatter.write_str("engine unavailable"),
+        }
+    }
+}
+#[rustfmt::skip]
+/// The refusal reply a daemon writes when the engine failed, so
+/// the caller receives a complete typed frame instead of a closed
+/// socket it cannot distinguish from daemon death. The typed
+/// engine error stays daemon-side; the wire carries the
+/// classification plus the rendered error text.
+#[derive(rkyv::Archive, rkyv::Serialize, rkyv::Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct EngineRefusal {
+    pub reason: EngineRefusalReason,
+    pub detail: String,
+}
+#[rustfmt::skip]
+impl EngineRefusal {
+    pub fn rejected(detail: String) -> Self {
+        Self {
+            reason: EngineRefusalReason::Rejected,
+            detail,
+        }
+    }
+    pub fn unavailable(detail: String) -> Self {
+        Self {
+            reason: EngineRefusalReason::Unavailable,
+            detail,
+        }
+    }
+    pub fn encode_bound_frame(&self) -> Result<Vec<u8>, SignalFrameError> {
+        let archive = rkyv::to_bytes::<rkyv::rancor::Error>(self)
+            .map_err(|_| SignalFrameError::ArchiveEncode)?;
+        let mut frame = Vec::with_capacity(
+            signal_frame::SHORT_HEADER_BYTE_COUNT + archive.len(),
+        );
+        frame.extend_from_slice(&short_header::ENGINE_REFUSAL.to_le_bytes());
+        frame.extend_from_slice(&archive);
+        Ok(frame)
+    }
+}
 #[rustfmt::skip]
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SignalFrameError {
+    FrameEncode,
     ArchiveEncode,
     ArchiveDecode,
     FrameTooShort { found: usize },
-    UnknownHeader { root_enum: &'static str, header: u64 },
-    HeaderMismatch { expected: u64, found: u64 },
+    LegacyHeader { contract_id: u32, wire_revision: u16 },
+    ContractMismatch { expected: u32, found: u32 },
+    UnsupportedWireRevision { contract_id: u32, expected: u16, found: u16 },
+    UnknownRoute { root: u8, variant: u8 },
+    RouteBodyMismatch { root: u8, variant: u8, body: &'static str },
+    UnexpectedFrameBody { found: &'static str },
+    OperationCount { found: usize },
+    EngineRefused { refusal: EngineRefusal },
 }
 #[rustfmt::skip]
 impl std::fmt::Display for SignalFrameError {
     fn fmt(&self, formatter: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Self::FrameEncode => {
+                formatter.write_str("failed to encode bound signal frame")
+            }
             Self::ArchiveEncode => formatter.write_str("failed to encode rkyv archive"),
             Self::ArchiveDecode => formatter.write_str("failed to decode rkyv archive"),
             Self::FrameTooShort { found } => {
                 write!(formatter, "signal frame too short: {found} bytes")
             }
-            Self::UnknownHeader { root_enum, header } => {
-                write!(formatter, "unknown {root_enum} short header 0x{header:016X}")
-            }
-            Self::HeaderMismatch { expected, found } => {
+            Self::LegacyHeader { contract_id, wire_revision } => {
                 write!(
                     formatter,
-                    "decoded payload header mismatch: expected 0x{expected:016X}, found 0x{found:016X}"
+                    "legacy unbound signal frame ({contract_id}, {wire_revision})"
                 )
+            }
+            Self::ContractMismatch { expected, found } => {
+                write!(
+                    formatter,
+                    "signal contract mismatch: expected {expected}, found {found}"
+                )
+            }
+            Self::UnsupportedWireRevision { contract_id, expected, found } => {
+                write!(
+                    formatter,
+                    "unsupported wire revision for contract {contract_id}: expected {expected}, found {found}"
+                )
+            }
+            Self::UnknownRoute { root, variant } => {
+                write!(formatter, "unknown bound signal route ({root}, {variant})")
+            }
+            Self::RouteBodyMismatch { root, variant, body } => {
+                write!(
+                    formatter,
+                    "bound signal route ({root}, {variant}) does not carry {body}"
+                )
+            }
+            Self::UnexpectedFrameBody { found } => {
+                write!(formatter, "expected one request frame, found {found}")
+            }
+            Self::OperationCount { found } => {
+                write!(formatter, "expected one request operation, found {found}")
+            }
+            Self::EngineRefused { refusal } => {
+                write!(formatter, "{}: {}", refusal.reason, refusal.detail)
             }
         }
     }
 }
 #[rustfmt::skip]
 impl std::error::Error for SignalFrameError {}
+#[rustfmt::skip]
+impl ContractMarker {
+    pub fn handshake_request_frame(request: signal_frame::HandshakeRequest) -> Frame {
+        Frame::new(
+            signal_frame::WireRoute::new(
+                signal_frame::RootCode::new(0xff),
+                signal_frame::VariantCode::new(0),
+            ),
+            FrameBody::HandshakeRequest(request),
+        )
+    }
+    pub fn handshake_reply_frame(reply: signal_frame::HandshakeReply) -> Frame {
+        Frame::new(
+            signal_frame::WireRoute::new(
+                signal_frame::RootCode::new(0xff),
+                signal_frame::VariantCode::new(1),
+            ),
+            FrameBody::HandshakeReply(reply),
+        )
+    }
+    pub fn decode_frame(bytes: &[u8]) -> Result<Frame, SignalFrameError> {
+        if bytes.len() < signal_frame::SHORT_HEADER_BYTE_COUNT {
+            return Err(SignalFrameError::FrameTooShort {
+                found: bytes.len(),
+            });
+        }
+        let mut header_bytes = [0_u8; signal_frame::SHORT_HEADER_BYTE_COUNT];
+        header_bytes.copy_from_slice(&bytes[..signal_frame::SHORT_HEADER_BYTE_COUNT]);
+        let header = u64::from_le_bytes(header_bytes);
+        let contract_id = header as u32;
+        let wire_revision = (header >> 32) as u16;
+        if contract_id == 0 || wire_revision == 0 {
+            return Err(SignalFrameError::LegacyHeader {
+                contract_id,
+                wire_revision,
+            });
+        }
+        if contract_id != 1u32 {
+            return Err(SignalFrameError::ContractMismatch {
+                expected: 1u32,
+                found: contract_id,
+            });
+        }
+        if wire_revision != 1u16 {
+            return Err(SignalFrameError::UnsupportedWireRevision {
+                contract_id,
+                expected: 1u16,
+                found: wire_revision,
+            });
+        }
+        let root = (header >> 56) as u8;
+        let variant = (header >> 48) as u8;
+        match (root, variant) {
+            (0, 0)
+            | (0, 1)
+            | (0, 2)
+            | (0, 3)
+            | (0, 4)
+            | (0, 5)
+            | (0, 6)
+            | (0, 7)
+            | (0, 8)
+            | (1, 0)
+            | (1, 1)
+            | (1, 2)
+            | (1, 3)
+            | (1, 4)
+            | (1, 5)
+            | (1, 6)
+            | (1, 7)
+            | (1, 8)
+            | (1, 9)
+            | (1, 10)
+            | (1, 11)
+            | (0xff, 0)
+            | (0xff, 1)
+            | (0xff, 2) => {}
+            _ => {
+                return Err(SignalFrameError::UnknownRoute {
+                    root,
+                    variant,
+                });
+            }
+        }
+        if (root, variant) == (0xff, 2) {
+            let refusal = rkyv::from_bytes::<
+                EngineRefusal,
+                rkyv::rancor::Error,
+            >(&bytes[signal_frame::SHORT_HEADER_BYTE_COUNT..])
+                .map_err(|_| SignalFrameError::ArchiveDecode)?;
+            return Err(SignalFrameError::EngineRefused {
+                refusal,
+            });
+        }
+        let frame = Frame::decode(bytes).map_err(|_| SignalFrameError::ArchiveDecode)?;
+        let header_route = signal_frame::WireRoute::new(
+            signal_frame::RootCode::new(root),
+            signal_frame::VariantCode::new(variant),
+        );
+        let body_matches = match frame.body() {
+            FrameBody::HandshakeRequest(_) => (root, variant) == (0xff, 0),
+            FrameBody::HandshakeReply(_) => (root, variant) == (0xff, 1),
+            FrameBody::Request { request, .. } => {
+                request.route().is_ok_and(|route| route == header_route)
+            }
+            FrameBody::Reply { reply, .. } => {
+                match reply {
+                    signal_frame::Reply::Accepted { per_operation, .. } => {
+                        match per_operation.head() {
+                            signal_frame::SubReply::Ok(output) => {
+                                output.wire_route() == header_route
+                            }
+                            signal_frame::SubReply::Failed {
+                                detail: Some(output),
+                                ..
+                            } => output.wire_route() == header_route,
+                            signal_frame::SubReply::Invalidated
+                            | signal_frame::SubReply::Failed { detail: None, .. }
+                            | signal_frame::SubReply::Skipped => root == 1,
+                        }
+                    }
+                    signal_frame::Reply::Rejected { .. } => root == 1,
+                }
+            }
+        };
+        if !body_matches {
+            let body = match frame.body() {
+                FrameBody::HandshakeRequest(_) => "handshake request",
+                FrameBody::HandshakeReply(_) => "handshake reply",
+                FrameBody::Request { .. } => "request",
+                FrameBody::Reply { .. } => "reply",
+            };
+            return Err(SignalFrameError::RouteBodyMismatch {
+                root,
+                variant,
+                body,
+            });
+        }
+        Ok(frame)
+    }
+    pub fn decode_single_request(
+        bytes: &[u8],
+    ) -> Result<(signal_frame::ExchangeIdentifier, Input), SignalFrameError> {
+        let frame = Self::decode_frame(bytes)?;
+        match frame.into_body() {
+            FrameBody::Request { exchange, request } => {
+                let found = request.payloads().len();
+                if found != 1 {
+                    return Err(SignalFrameError::OperationCount {
+                        found,
+                    });
+                }
+                Ok((exchange, request.payloads.into_head()))
+            }
+            FrameBody::HandshakeRequest(_) => {
+                Err(SignalFrameError::UnexpectedFrameBody {
+                    found: "handshake request",
+                })
+            }
+            FrameBody::HandshakeReply(_) => {
+                Err(SignalFrameError::UnexpectedFrameBody {
+                    found: "handshake reply",
+                })
+            }
+            FrameBody::Reply { .. } => {
+                Err(SignalFrameError::UnexpectedFrameBody {
+                    found: "reply",
+                })
+            }
+        }
+    }
+}
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(
     rkyv::Archive,
@@ -1313,8 +2925,8 @@ pub enum InputRoute {
 
 #[rustfmt::skip]
 #[cfg_attr(
-    feature = "nota-text",
-    derive(nota::NotaDecode, nota::NotaDecodeTraced, nota::NotaEncode)
+    feature = "dotos-text",
+    derive(dotos::DotosDecode, dotos::DotosDecodeTraced, dotos::DotosEncode)
 )]
 #[derive(
     rkyv::Archive,
@@ -1356,6 +2968,64 @@ impl Input {
             Self::RecoverFromFailure(_) => InputRoute::RecoverFromFailure,
         }
     }
+    pub fn wire_route(&self) -> signal_frame::WireRoute {
+        match self {
+            Self::Inspect(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(0),
+                    signal_frame::VariantCode::new(0),
+                )
+            }
+            Self::AttemptUpgrade(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(0),
+                    signal_frame::VariantCode::new(1),
+                )
+            }
+            Self::Report(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(0),
+                    signal_frame::VariantCode::new(2),
+                )
+            }
+            Self::AskHandoverMarker(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(0),
+                    signal_frame::VariantCode::new(3),
+                )
+            }
+            Self::ReadyToHandover(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(0),
+                    signal_frame::VariantCode::new(4),
+                )
+            }
+            Self::HandoverCompleted(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(0),
+                    signal_frame::VariantCode::new(5),
+                )
+            }
+            Self::Mirror(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(0),
+                    signal_frame::VariantCode::new(6),
+                )
+            }
+            Self::Divergence(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(0),
+                    signal_frame::VariantCode::new(7),
+                )
+            }
+            Self::RecoverFromFailure(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(0),
+                    signal_frame::VariantCode::new(8),
+                )
+            }
+        }
+    }
     pub fn short_header(&self) -> u64 {
         match self {
             Self::Inspect(_) => short_header::INPUT_INSPECT,
@@ -1368,63 +3038,6 @@ impl Input {
             Self::Divergence(_) => short_header::INPUT_DIVERGENCE,
             Self::RecoverFromFailure(_) => short_header::INPUT_RECOVER_FROM_FAILURE,
         }
-    }
-    pub fn route_from_short_header(header: u64) -> Result<InputRoute, SignalFrameError> {
-        match header {
-            short_header::INPUT_INSPECT => Ok(InputRoute::Inspect),
-            short_header::INPUT_ATTEMPT_UPGRADE => Ok(InputRoute::AttemptUpgrade),
-            short_header::INPUT_REPORT => Ok(InputRoute::Report),
-            short_header::INPUT_ASK_HANDOVER_MARKER => Ok(InputRoute::AskHandoverMarker),
-            short_header::INPUT_READY_TO_HANDOVER => Ok(InputRoute::ReadyToHandover),
-            short_header::INPUT_HANDOVER_COMPLETED => Ok(InputRoute::HandoverCompleted),
-            short_header::INPUT_MIRROR => Ok(InputRoute::Mirror),
-            short_header::INPUT_DIVERGENCE => Ok(InputRoute::Divergence),
-            short_header::INPUT_RECOVER_FROM_FAILURE => {
-                Ok(InputRoute::RecoverFromFailure)
-            }
-            _ => {
-                Err(SignalFrameError::UnknownHeader {
-                    root_enum: "Input",
-                    header,
-                })
-            }
-        }
-    }
-    pub fn encode_signal_frame(&self) -> Result<Vec<u8>, SignalFrameError> {
-        let archive = rkyv::to_bytes::<rkyv::rancor::Error>(self)
-            .map_err(|_| SignalFrameError::ArchiveEncode)?;
-        let mut frame = Vec::with_capacity(
-            SIGNAL_SHORT_HEADER_BYTE_COUNT + archive.len(),
-        );
-        frame.extend_from_slice(&self.short_header().to_le_bytes());
-        frame.extend_from_slice(&archive);
-        Ok(frame)
-    }
-    pub fn decode_signal_frame(
-        frame: &[u8],
-    ) -> Result<(InputRoute, Self), SignalFrameError> {
-        if frame.len() < SIGNAL_SHORT_HEADER_BYTE_COUNT {
-            return Err(SignalFrameError::FrameTooShort {
-                found: frame.len(),
-            });
-        }
-        let mut header_bytes = [0_u8; SIGNAL_SHORT_HEADER_BYTE_COUNT];
-        header_bytes.copy_from_slice(&frame[..SIGNAL_SHORT_HEADER_BYTE_COUNT]);
-        let header = u64::from_le_bytes(header_bytes);
-        let route = Self::route_from_short_header(header)?;
-        let value = rkyv::from_bytes::<
-            Self,
-            rkyv::rancor::Error,
-        >(&frame[SIGNAL_SHORT_HEADER_BYTE_COUNT..])
-            .map_err(|_| SignalFrameError::ArchiveDecode)?;
-        let expected = value.short_header();
-        if expected != header {
-            return Err(SignalFrameError::HeaderMismatch {
-                expected,
-                found: header,
-            });
-        }
-        Ok((route, value))
     }
 }
 
@@ -1446,6 +3059,82 @@ impl Output {
             Self::RequestUnimplemented(_) => OutputRoute::RequestUnimplemented,
         }
     }
+    pub fn wire_route(&self) -> signal_frame::WireRoute {
+        match self {
+            Self::InspectionReported(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(0),
+                )
+            }
+            Self::UpgradeCompleted(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(1),
+                )
+            }
+            Self::UpgradeRejected(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(2),
+                )
+            }
+            Self::Reported(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(3),
+                )
+            }
+            Self::HandoverMarker(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(4),
+                )
+            }
+            Self::HandoverAccepted(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(5),
+                )
+            }
+            Self::HandoverFinalized(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(6),
+                )
+            }
+            Self::MirrorAcknowledged(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(7),
+                )
+            }
+            Self::DivergenceAcknowledged(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(8),
+                )
+            }
+            Self::RecoveryCompleted(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(9),
+                )
+            }
+            Self::HandoverRejected(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(10),
+                )
+            }
+            Self::RequestUnimplemented(_) => {
+                signal_frame::WireRoute::new(
+                    signal_frame::RootCode::new(1),
+                    signal_frame::VariantCode::new(11),
+                )
+            }
+        }
+    }
     pub fn short_header(&self) -> u64 {
         match self {
             Self::InspectionReported(_) => short_header::OUTPUT_INSPECTION_REPORTED,
@@ -1463,74 +3152,6 @@ impl Output {
             Self::HandoverRejected(_) => short_header::OUTPUT_HANDOVER_REJECTED,
             Self::RequestUnimplemented(_) => short_header::OUTPUT_REQUEST_UNIMPLEMENTED,
         }
-    }
-    pub fn route_from_short_header(
-        header: u64,
-    ) -> Result<OutputRoute, SignalFrameError> {
-        match header {
-            short_header::OUTPUT_INSPECTION_REPORTED => {
-                Ok(OutputRoute::InspectionReported)
-            }
-            short_header::OUTPUT_UPGRADE_COMPLETED => Ok(OutputRoute::UpgradeCompleted),
-            short_header::OUTPUT_UPGRADE_REJECTED => Ok(OutputRoute::UpgradeRejected),
-            short_header::OUTPUT_REPORTED => Ok(OutputRoute::Reported),
-            short_header::OUTPUT_HANDOVER_MARKER => Ok(OutputRoute::HandoverMarker),
-            short_header::OUTPUT_HANDOVER_ACCEPTED => Ok(OutputRoute::HandoverAccepted),
-            short_header::OUTPUT_HANDOVER_FINALIZED => Ok(OutputRoute::HandoverFinalized),
-            short_header::OUTPUT_MIRROR_ACKNOWLEDGED => {
-                Ok(OutputRoute::MirrorAcknowledged)
-            }
-            short_header::OUTPUT_DIVERGENCE_ACKNOWLEDGED => {
-                Ok(OutputRoute::DivergenceAcknowledged)
-            }
-            short_header::OUTPUT_RECOVERY_COMPLETED => Ok(OutputRoute::RecoveryCompleted),
-            short_header::OUTPUT_HANDOVER_REJECTED => Ok(OutputRoute::HandoverRejected),
-            short_header::OUTPUT_REQUEST_UNIMPLEMENTED => {
-                Ok(OutputRoute::RequestUnimplemented)
-            }
-            _ => {
-                Err(SignalFrameError::UnknownHeader {
-                    root_enum: "Output",
-                    header,
-                })
-            }
-        }
-    }
-    pub fn encode_signal_frame(&self) -> Result<Vec<u8>, SignalFrameError> {
-        let archive = rkyv::to_bytes::<rkyv::rancor::Error>(self)
-            .map_err(|_| SignalFrameError::ArchiveEncode)?;
-        let mut frame = Vec::with_capacity(
-            SIGNAL_SHORT_HEADER_BYTE_COUNT + archive.len(),
-        );
-        frame.extend_from_slice(&self.short_header().to_le_bytes());
-        frame.extend_from_slice(&archive);
-        Ok(frame)
-    }
-    pub fn decode_signal_frame(
-        frame: &[u8],
-    ) -> Result<(OutputRoute, Self), SignalFrameError> {
-        if frame.len() < SIGNAL_SHORT_HEADER_BYTE_COUNT {
-            return Err(SignalFrameError::FrameTooShort {
-                found: frame.len(),
-            });
-        }
-        let mut header_bytes = [0_u8; SIGNAL_SHORT_HEADER_BYTE_COUNT];
-        header_bytes.copy_from_slice(&frame[..SIGNAL_SHORT_HEADER_BYTE_COUNT]);
-        let header = u64::from_le_bytes(header_bytes);
-        let route = Self::route_from_short_header(header)?;
-        let value = rkyv::from_bytes::<
-            Self,
-            rkyv::rancor::Error,
-        >(&frame[SIGNAL_SHORT_HEADER_BYTE_COUNT..])
-            .map_err(|_| SignalFrameError::ArchiveDecode)?;
-        let expected = value.short_header();
-        if expected != header {
-            return Err(SignalFrameError::HeaderMismatch {
-                expected,
-                found: header,
-            });
-        }
-        Ok((route, value))
     }
 }
 
@@ -1553,11 +3174,12 @@ impl signal_frame::SignalOperationHeads for Input {
 #[rustfmt::skip]
 impl signal_frame::LogVariant for Input {
     fn log_variant(&self) -> u64 {
-        self.short_header()
+        let route = self.wire_route();
+        u64::from(route.root().value()) | (u64::from(route.variant().value()) << 8)
     }
 }
 #[rustfmt::skip]
-pub type Frame = signal_frame::ExchangeFrame<Input, Output>;
+pub type Frame = signal_frame::BoundExchangeFrame<ContractMarker, Input, Output>;
 #[rustfmt::skip]
 pub type FrameBody = signal_frame::ExchangeFrameBody<Input, Output>;
 #[rustfmt::skip]
@@ -1569,30 +3191,44 @@ pub type RequestBuilder = signal_frame::RequestBuilder<Input>;
 #[rustfmt::skip]
 impl Input {
     pub fn into_frame(self, exchange: signal_frame::ExchangeIdentifier) -> Frame {
-        let short_header = signal_frame::ShortHeader::new(self.short_header());
+        let route = self.wire_route();
         let request = signal_frame::Request::from_payload(self);
-        Frame::with_short_header(
-            short_header,
+        Frame::new(
+            route,
             FrameBody::Request {
                 exchange,
                 request,
             },
         )
     }
+    pub fn encode_request_frame(
+        self,
+        exchange: signal_frame::ExchangeIdentifier,
+    ) -> Result<Vec<u8>, SignalFrameError> {
+        self.into_frame(exchange).encode().map_err(|_| SignalFrameError::FrameEncode)
+    }
 }
 #[rustfmt::skip]
 impl Output {
     pub fn into_reply_frame(self, exchange: signal_frame::ExchangeIdentifier) -> Frame {
-        let short_header = signal_frame::ShortHeader::new(self.short_header());
+        let route = self.wire_route();
         let reply = signal_frame::Reply::committed(
             signal_frame::NonEmpty::single(signal_frame::SubReply::Ok(self)),
         );
-        Frame::with_short_header(
-            short_header,
+        Frame::new(
+            route,
             FrameBody::Reply {
                 exchange,
                 reply,
             },
         )
+    }
+    pub fn encode_reply_frame(
+        self,
+        exchange: signal_frame::ExchangeIdentifier,
+    ) -> Result<Vec<u8>, SignalFrameError> {
+        self.into_reply_frame(exchange)
+            .encode()
+            .map_err(|_| SignalFrameError::FrameEncode)
     }
 }
