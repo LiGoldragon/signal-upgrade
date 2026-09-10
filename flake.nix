@@ -21,10 +21,10 @@
           sha256 = "sha256-gh/xTkxKHL4eiRXzWv8KP7vfjSk61Iq48x47BEDFgfk=";
         };
         inherit (rust) craneLib toolchain;
-        schemaFilter = path: type: type == "regular" && pkgs.lib.hasSuffix ".schema" path;
+        ethosFilter = path: type: type == "regular" && pkgs.lib.hasSuffix ".ethos" path;
         src = rust.cleanSource {
           root = ./.;
-          extraFilters = [ schemaFilter ];
+          extraFilters = [ ethosFilter ];
         };
         commonArgs = {
           inherit src;
@@ -37,14 +37,7 @@
         checks = {
           build = craneLib.cargoBuild (commonArgs // { inherit cargoArtifacts; });
           test = craneLib.cargoTest (commonArgs // { inherit cargoArtifacts; });
-          test-round-trip = craneLib.cargoTest (commonArgs // {
-            inherit cargoArtifacts;
-            cargoTestExtraArgs = "--test round_trip";
-          });
-          test-generated-schema = craneLib.cargoTest (commonArgs // {
-            inherit cargoArtifacts;
-            cargoTestExtraArgs = "--test generated_schema";
-          });
+          test-datom = craneLib.cargoTest (commonArgs // { inherit cargoArtifacts; cargoTestExtraArgs = "--features datom"; });
           doc = craneLib.cargoDoc (commonArgs // {
             inherit cargoArtifacts;
             RUSTDOCFLAGS = "-D warnings";
@@ -52,7 +45,7 @@
           fmt = craneLib.cargoFmt { inherit src; };
           clippy = craneLib.cargoClippy (commonArgs // {
             inherit cargoArtifacts;
-            cargoClippyExtraArgs = "--all-targets -- -D warnings";
+            cargoClippyExtraArgs = "--all-targets --all-features -- -D warnings";
           });
         };
         devShells.default = pkgs.mkShell {
