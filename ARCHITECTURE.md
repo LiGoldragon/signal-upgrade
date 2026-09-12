@@ -9,8 +9,8 @@ runtime crate `upgrade` and the meta policy contract
 
 ## Boundaries
 
-This crate owns only typed Signal records, optional DOTOS projection
-derives, generated `signal-frame` aliases/codecs, and round-trip
+This crate owns only typed Signal records, optional Datom text
+projection derives, generated `signal-frame` aliases/codecs, and round-trip
 witnesses. It does not own runtime orchestration, socket binding,
 durable storage, migration execution, systemd unit control, or Persona
 handover logic. It also does not own meta catalogue policy or selector
@@ -48,16 +48,10 @@ lives in the `upgrade` runtime.
   and fails the build when the generated Rust is stale.
 - `src/lib.rs` re-exports the generated schema module as the crate's
   public contract API.
-- `tests/round_trip.rs` proves the merged channel round-trips through
-  Signal frames in default mode and through DOTOS under `dotos-text`.
-- `tests/dependency_boundary.rs` pins the feature boundary: default
-  builds do not pull `dotos`, `dotos-codec`, or `signal-core`;
-  `dotos-text` is the explicit text-codec opt-in.
-- `tests/generated_schema.rs` exercises generated Input/Output
-  short-header/frame round-trips and guards against generated
-  Nexus/SEMA runtime terms, trace/mail helpers, and generic plane
-  envelopes in this contract.
-- `examples/canonical.dotos` records stable catalogue text examples.
+- `tests/contract.rs` proves the merged channel round-trips through
+  Signal frames in default mode and through Datom text under the
+  `datom` feature.
+- `examples/canonical.datom` records stable catalogue text examples.
 
 ## Invariants
 
@@ -72,9 +66,8 @@ lives in the `upgrade` runtime.
   authority sequences; the daemon mints those.
 - The contract crate carries no daemon, actor, database, or Tokio
   runtime code.
-- The generated schema module is emitted with `schema-rust-next`
-  `WireContract` target, so it carries wire types/codecs only.
-- DOTOS parsing/rendering is feature-gated under `dotos-text`; the
+- The generated module carries wire types/codecs only.
+- Datom text parsing/rendering is feature-gated under `datom`; the
   default contract graph is binary-only for daemon consumers.
 - The ordinary and meta contracts remain separate repositories.
 - Handover records use contract-local `ComponentName`,
