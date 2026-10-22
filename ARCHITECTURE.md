@@ -16,7 +16,7 @@ durable storage, migration execution, systemd unit control, or Persona
 handover logic. It also does not own meta catalogue policy or selector
 authority (those stay in `meta-signal-upgrade`), the private upgrade
 socket or version-handshake policy, or raw-byte projection policy below
-this wire contract. Daemon-internal Signal/Nexus/SEMA plane schemas live
+this wire contract. Daemon-internal Signal/Nexus/MEMORY plane schemas live
 inside the `upgrade` runtime crate, not in this external contract
 repository.
 
@@ -57,7 +57,7 @@ lives in the `upgrade` runtime.
 
 - Contract operation roots are contract-local verbs in verb form
   (`Inspect`, `AttemptUpgrade`, `Report`, the handover verbs); the six
-  Sema classification words must not appear as request roots on this
+  Memory classification words must not appear as request roots on this
   wire.
 - Wire enums are closed. No `Unknown` escape hatch.
 - No stringly-typed dispatch. Status and reason fields are typed closed
@@ -87,7 +87,7 @@ runtime planes here.
 
 **Per-component concerns:**
 - The merged ordinary surface from `signal-version-handover` and
-  `signal-sema-upgrade` is declared in one schema file.
+  `signal-memory-upgrade` is declared in one schema file.
 - `Mirror` and `Divergence` payloads carry raw bytes in typed
   containers; the schema declares those byte-carrying record shapes,
   but projection policy stays below the contract and execution policy
