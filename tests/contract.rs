@@ -1,6 +1,6 @@
 use signal_upgrade::{
     ByteViewable, Inspection, Query, RequestUnimplementedPayload, Response, Restorable, Signal,
-    Signalizable,
+    Signalizable, UnimplementedReason,
 };
 #[test]
 fn inspect_round_trips_as_fresh_signal() {
@@ -10,7 +10,9 @@ fn inspect_round_trips_as_fresh_signal() {
 }
 #[test]
 fn rejection_response_round_trips_as_fresh_signal() {
-    let response = Response::RequestUnimplemented(RequestUnimplementedPayload::NotBuiltYet);
+    let response = Response::RequestUnimplemented(RequestUnimplementedPayload(
+        UnimplementedReason::NotBuiltYet,
+    ));
     let received =
         Signal::<Response>::from(response.signalize().expect("signalize").bytes().to_vec());
     assert_eq!(received.restore().expect("restore"), response);
@@ -27,7 +29,7 @@ fn inspect_round_trips_as_datom_text() {
     assert_eq!(
         p.actualize(&mut Budget {
             remaining: 1024,
-            reader: ReaderBudget { remaining: 1024 },
+            reader: ReaderBudget::try_from(1024).unwrap(),
             depth: 0,
             maximum_depth: 1024
         })
